@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="Lang">
+        <item>@string/en_lang</item>
+        <item>@string/de_lang</item>
+        <item>@string/fr_lang</item>
+        <item>@string/ru_lang</item>
+    </string-array>
+
+    <string-array name="LangLocale">
+        <item>en</item>
+        <item>de</item>
+        <item>fr</item>
+        <item>ru</item>
+    </string-array>
+</resources>

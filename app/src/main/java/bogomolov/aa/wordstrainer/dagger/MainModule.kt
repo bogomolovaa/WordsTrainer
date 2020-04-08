@@ -3,18 +3,15 @@ package bogomolov.aa.wordstrainer.dagger
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
-import bogomolov.aa.wordstrainer.repository.AppDatabase
-import bogomolov.aa.wordstrainer.repository.DB_NAME
-import bogomolov.aa.wordstrainer.repository.Repository
-import bogomolov.aa.wordstrainer.repository.RepositoryImpl
+import bogomolov.aa.wordstrainer.android.USE_GOOGLE_SHEET
+import bogomolov.aa.wordstrainer.android.getSetting
+import bogomolov.aa.wordstrainer.repository.*
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 
 @Module
 abstract class MainModule {
-    @Binds
-    abstract fun bindsRepository(repository: RepositoryImpl): Repository
 
     @Module
     companion object {
@@ -30,5 +27,18 @@ abstract class MainModule {
         @JvmStatic
         @Provides
         fun providesContext(application: Application): Context = application
+
+        @JvmStatic
+        @Provides
+        fun providesRepository(
+            application: Application,
+            db: AppDatabase,
+            translator: YandexTranslateProvider
+        ): Repository {
+            val useGoogleSheet = getSetting<Boolean>(application, USE_GOOGLE_SHEET)!!
+            return if (useGoogleSheet)
+                GoogleSheetsRepository(application, translator)
+            else RoomRepository(db, translator)
+        }
     }
 }

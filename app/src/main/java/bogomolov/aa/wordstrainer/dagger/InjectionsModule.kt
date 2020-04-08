@@ -23,7 +23,4 @@ abstract class InjectionsModule {
     @ContributesAndroidInjector
     abstract fun bindTranslationFragment(): TranslationFragment
 
-    @ContributesAndroidInjector
-    abstract fun bindSettingsFragment(): SettingsFragment
-
 }

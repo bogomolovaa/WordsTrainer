@@ -6,7 +6,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="colorControlNormal">#FFFFFF</item>
         <item name="android:windowSoftInputMode">adjustResize</item>
         <item name="windowActionModeOverlay">true</item>
 

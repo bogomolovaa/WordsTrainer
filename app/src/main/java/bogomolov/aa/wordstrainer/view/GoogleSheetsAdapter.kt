@@ -33,7 +33,7 @@ class GoogleSheetsAdapter(private val helper: AdapterHelper<GoogleSheet, SheetLa
     override fun getItem(position: Int) = sheets[position]
 
     override fun bind(item: GoogleSheet?, binding: SheetLayoutBinding) {
-        //binding.user = item
+        binding.sheetName.text = item?.name ?: ""
     }
 
     override fun getItemCount() = sheets.size

@@ -1,5 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph">
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
+    app:startDestination="@id/translationFragment">
 
+    <fragment
+        android:id="@+id/translationFragment"
+        android:name="bogomolov.aa.wordstrainer.view.fragments.TranslationFragment"
+        android:label="@string/translation">
+        <action
+            android:id="@+id/action_translationFragment_to_repetitionFragment"
+            app:destination="@id/repetitionFragment" />
+        <action
+            android:id="@+id/action_translationFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/repetitionFragment"
+        android:name="bogomolov.aa.wordstrainer.view.fragments.RepetitionFragment"
+        android:label="@string/repetition" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="bogomolov.aa.wordstrainer.view.fragments.SettingsFragment"
+        android:label="@string/settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_googleSheetsFragment"
+            app:destination="@id/googleSheetsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/googleSheetsFragment"
+        android:name="bogomolov.aa.wordstrainer.view.fragments.GoogleSheetsFragment"
+        android:label="@string/select_sheet" />
 </navigation>

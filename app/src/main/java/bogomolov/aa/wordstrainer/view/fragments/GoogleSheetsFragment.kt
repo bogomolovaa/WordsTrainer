@@ -2,32 +2,36 @@ package bogomolov.aa.wordstrainer.view.fragments
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.observe
 
 import bogomolov.aa.wordstrainer.R
+import bogomolov.aa.wordstrainer.android.GOOGLE_SHEET_ID
+import bogomolov.aa.wordstrainer.android.GOOGLE_SHEET_NAME
+import bogomolov.aa.wordstrainer.android.USE_GOOGLE_SHEET
+import bogomolov.aa.wordstrainer.android.setSetting
 import bogomolov.aa.wordstrainer.dagger.ViewModelFactory
 import bogomolov.aa.wordstrainer.databinding.FragmentGoogleSheetsBinding
-import bogomolov.aa.wordstrainer.databinding.FragmentTranslationBinding
+import bogomolov.aa.wordstrainer.view.AdapterHelper
+import bogomolov.aa.wordstrainer.view.GoogleSheetsAdapter
 import bogomolov.aa.wordstrainer.viewmodel.GoogleSheetsViewModel
-import bogomolov.aa.wordstrainer.viewmodel.TranslationViewModel
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
-/**
- * A simple [Fragment] subclass.
- */
 class GoogleSheetsFragment : Fragment() {
     @Inject
     internal lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: GoogleSheetsViewModel by activityViewModels { viewModelFactory }
+    private lateinit var navController: NavController
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -47,12 +51,47 @@ class GoogleSheetsFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
+        setHasOptionsMenu(true)
+        viewModel.loadSheets()
+
+        val adapter = GoogleSheetsAdapter(helper = AdapterHelper(onClick = {
+            setSetting(requireContext(), GOOGLE_SHEET_NAME, it.name)
+            setSetting(requireContext(), GOOGLE_SHEET_ID, it.id)
+            setSetting(requireContext(), USE_GOOGLE_SHEET, true)
+            navController.navigate(R.id.settingsFragment)
+        }))
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = adapter
+        viewModel.sheetsLiveData.observe(viewLifecycleOwner){
+            Log.i("test","submitList")
+            adapter.submitList(it)
+        }
 
 
-        val navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
+        navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         NavigationUI.setupWithNavController(binding.toolbar, navController)
 
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        menu.clear()
+        inflater.inflate(R.menu.google_sheets_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.create_sheet_action) {
+            val enterNameDialog = SheetNameBottomDialogFragment(
+                onSave = {
+                    viewModel.createGoogleSheet(it)
+                    navController.navigate(R.id.settingsFragment)
+                }
+            )
+            enterNameDialog.show(parentFragmentManager,"GoogleSheetsFragment")
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 }

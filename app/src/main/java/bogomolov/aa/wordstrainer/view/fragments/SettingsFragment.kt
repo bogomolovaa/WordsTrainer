@@ -1,22 +1,22 @@
 package bogomolov.aa.wordstrainer.view.fragments
 
-import android.content.Context
+import android.content.Intent
+import android.content.Intent.getIntent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.Fragment
+import androidx.navigation.NavDeepLinkBuilder
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
-
 import bogomolov.aa.wordstrainer.R
 import bogomolov.aa.wordstrainer.android.*
 import bogomolov.aa.wordstrainer.databinding.FragmentSettingsBinding
 import bogomolov.aa.wordstrainer.view.MainActivity
-import dagger.android.support.AndroidSupportInjection
+
 
 class SettingsFragment() : Fragment() {
 
@@ -58,7 +58,23 @@ class SettingsFragment() : Fragment() {
 
         binding.googleSheetSwitch.setOnCheckedChangeListener { _, isChecked ->
             binding.googleSheetLayout.visibility = if (isChecked) View.VISIBLE else View.GONE
-            if (isChecked) mainActivity.requestSignIn(requireContext())
+            /*
+            if (isChecked) {
+                mainActivity.requestSignIn(requireContext())
+            } else {
+                setSetting(requireContext(), USE_GOOGLE_SHEET, false)
+            }
+             */
+            setSetting(requireContext(), USE_GOOGLE_SHEET, isChecked)
+            //navController.popBackStack(R.id.translationFragment,true)
+           // reload()
+            requireActivity().overridePendingTransition(0, 0)
+            NavDeepLinkBuilder(requireContext())
+                .setComponentName(MainActivity::class.java)
+                .setGraph(R.navigation.nav_graph)
+                .setDestination(R.id.settingsFragment)
+                .createPendingIntent().send()
+          //  requireActivity().overridePendingTransition(0, 0)
         }
 
         binding.googleSheetName.setOnClickListener {
@@ -66,6 +82,15 @@ class SettingsFragment() : Fragment() {
         }
 
         return binding.root
+    }
+
+    fun reload() {
+        val intent = requireActivity().intent
+        requireActivity().overridePendingTransition(0, 0)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+        requireActivity().finish()
+        requireActivity().overridePendingTransition(0, 0)
+        startActivity(intent)
     }
 
 

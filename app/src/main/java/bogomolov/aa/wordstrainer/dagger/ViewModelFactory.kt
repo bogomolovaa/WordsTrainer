@@ -1,5 +1,6 @@
 package bogomolov.aa.wordstrainer.dagger
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.MapKey
@@ -10,8 +11,13 @@ import kotlin.reflect.KClass
 class ViewModelFactory
 @Inject constructor(private val creators: MutableMap<Class<out ViewModel>, Provider<ViewModel>>) : ViewModelProvider.Factory {
 
+    init {
+        Log.i("test", "ViewModelFactory init")
+    }
+
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        Log.i("test", "ViewModelFactory create ${modelClass.simpleName}")
         var creator = creators[modelClass]
         if (creator == null) {
             for ((key, value) in creators) {

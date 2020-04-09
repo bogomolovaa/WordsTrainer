@@ -1,5 +1,6 @@
 package bogomolov.aa.wordstrainer.repository
 
+import android.util.Log
 import bogomolov.aa.wordstrainer.repository.entity.Word
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -20,6 +21,9 @@ class RoomRepository
         word.id = db.wordsDao().addWord(word).toInt()
     }
 
-    override fun loadAllWords() = db.wordsDao().loadAll()
+    override fun loadAllWords(): List<Word> {
+        Log.i("test", "RoomRepository loadAllWords()")
+        return db.wordsDao().loadAll()
+    }
 
 }

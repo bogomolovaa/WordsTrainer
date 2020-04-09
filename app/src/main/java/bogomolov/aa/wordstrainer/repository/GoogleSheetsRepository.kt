@@ -29,22 +29,28 @@ class GoogleSheetsRepository
     translateProvider: YandexTranslateProvider
 ) : Repository(translateProvider) {
 
+    init {
+        Log.i("test","GoogleSheetsRepository created")
+    }
+
     private var credential: GoogleAccountCredential? = null
     private var sheetsService: Sheets? = null
     private var driveService: Drive? = null
 
     fun setCredential(credential: GoogleAccountCredential) {
         this.credential = credential
-        Log.i("test","set credential $credential")
+        Log.i("test", "set credential $credential")
         GlobalScope.launch(Dispatchers.IO) {
             initWords()
         }
     }
 
+    fun hasCredential() = credential != null
+
     override fun updateRank(word: Word, delta: Int) {
         word.rank += delta
         val googleSheetId = getGoogleSheetId()
-        if (googleSheetId != null) {
+        if (googleSheetId != null && credential != null) {
             if (sheetsService == null) sheetsService = getSheetsService()
             updateRankCell(sheetsService!!, googleSheetId, word)
         }
@@ -52,15 +58,18 @@ class GoogleSheetsRepository
 
     override fun addWord(word: Word) {
         val googleSheetId = getGoogleSheetId()
-        if (googleSheetId != null) {
+        if (googleSheetId != null && credential != null) {
             if (sheetsService == null) sheetsService = getSheetsService()
             addWordToGoogleSheets(sheetsService!!, googleSheetId, word)
+        }else{
+            Log.i("test","addWord googleSheetId $googleSheetId credential $credential")
         }
     }
 
     override fun loadAllWords(): List<Word> {
+        Log.i("test", "GoogleSheetsRepository loadAllWords()")
         val googleSheetId = getGoogleSheetId()
-        if (googleSheetId != null) {
+        if (googleSheetId != null && credential != null) {
             if (sheetsService == null) sheetsService = getSheetsService()
             return loadSheet(sheetsService!!, googleSheetId)
         }
@@ -121,7 +130,7 @@ class GoogleSheetsRepository
         row1.add(word.translation)
         row1.add(word.id)
         row1.add(word.rank)
-        row1.add(word.translation)
+        row1.add(word.json)
         val values = ArrayList<List<Any>>()
         values.add(row1)
         val valueRange = ValueRange()
@@ -135,7 +144,7 @@ class GoogleSheetsRepository
     }
 
     private fun updateRankCell(service: Sheets, spreadsheetId: String, word: Word) {
-        val range = "D:${word.id}"
+        val range = "D${word.id}"
         val row1: MutableList<Any> = ArrayList()
         row1.add(word.rank)
         val values = ArrayList<List<Any>>()
@@ -151,7 +160,7 @@ class GoogleSheetsRepository
     }
 
     fun getAllSheets(): List<GoogleSheet> {
-        Log.i("test","getAllSheets")
+        Log.i("test", "getAllSheets")
         if (driveService == null) driveService = getDriveService()
         val filesList = driveService!!.files().list()
             .setQ("mimeType ='${TYPE_GOOGLE_SHEETS}'")
@@ -162,7 +171,7 @@ class GoogleSheetsRepository
         if (filesList != null) {
             for (file in filesList.files)
                 googleSheets += GoogleSheet(file.name, file.id)
-            Log.i("test","getAllSheets size ${googleSheets.size}")
+            Log.i("test", "getAllSheets size ${googleSheets.size}")
         } else {
             Log.i("test", "null filesList")
         }

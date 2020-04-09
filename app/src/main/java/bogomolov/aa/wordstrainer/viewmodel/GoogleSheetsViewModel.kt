@@ -34,7 +34,14 @@ class GoogleSheetsViewModel
                 setSetting(repository.context, USE_GOOGLE_SHEET, false)
             } else {
                 setSetting(repository.context, GOOGLE_SHEET_ID, id)
+                onSheetSelected()
             }
+        }
+    }
+
+    fun onSheetSelected(){
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.initWords()
         }
     }
 }

@@ -6,7 +6,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-const val MAX_RANK = 3
+const val MAX_RANK = 10
 
 abstract class Repository(private val translateProvider: YandexTranslateProvider) {
 
@@ -33,6 +33,7 @@ abstract class Repository(private val translateProvider: YandexTranslateProvider
         val wordsToRemember = ArrayList<Word>()
         for (word in words) if (word.rank < MAX_RANK)
             wordsToRemember.add(word)
+        Log.i("test","nextWord wordsToRemember $wordsToRemember")
         if (wordsToRemember.size == 0) return null
         val nextId = Random().nextInt(wordsToRemember.size)
         return wordsToRemember[nextId]

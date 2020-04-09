@@ -32,13 +32,13 @@ abstract class MainModule {
         @Provides
         fun providesRepository(
             application: Application,
-            db: AppDatabase,
-            translator: YandexTranslateProvider
+            googleSheetsRepository: GoogleSheetsRepository,
+            roomRepository: RoomRepository
         ): Repository {
             val useGoogleSheet = getSetting<Boolean>(application, USE_GOOGLE_SHEET)!!
             return if (useGoogleSheet)
-                GoogleSheetsRepository(application, translator)
-            else RoomRepository(db, translator)
+                googleSheetsRepository
+            else roomRepository
         }
     }
 }

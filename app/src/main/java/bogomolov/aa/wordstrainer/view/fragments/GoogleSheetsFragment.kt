@@ -58,6 +58,7 @@ class GoogleSheetsFragment : Fragment() {
             setSetting(requireContext(), GOOGLE_SHEET_NAME, it.name)
             setSetting(requireContext(), GOOGLE_SHEET_ID, it.id)
             setSetting(requireContext(), USE_GOOGLE_SHEET, true)
+            viewModel.onSheetSelected()
             navController.navigate(R.id.settingsFragment)
         }))
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())

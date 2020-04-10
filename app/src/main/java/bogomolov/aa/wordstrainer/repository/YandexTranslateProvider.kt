@@ -9,6 +9,7 @@ import bogomolov.aa.wordstrainer.repository.json.fromJson
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
+import java.util.*
 import javax.inject.Inject
 
 class YandexTranslateProvider @Inject constructor(private val context: Context) {
@@ -33,6 +34,7 @@ class YandexTranslateProvider @Inject constructor(private val context: Context) 
 
     private fun getUrl(text: String): String {
         val direction = getSetting<String>(context, TRANSLATION_DIRECTION)
-        return "https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=dict.1.1.20190813T074253Z.2531cef640eec2d6.66f19e3b927bd253c4e6c310f66b91bd14ebadc7&lang=$direction&ui=ru&text=$text"
+        val lang = Locale.getDefault().language
+        return "https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=dict.1.1.20190813T074253Z.2531cef640eec2d6.66f19e3b927bd253c4e6c310f66b91bd14ebadc7&lang=$direction&ui=$lang&text=$text"
     }
 }

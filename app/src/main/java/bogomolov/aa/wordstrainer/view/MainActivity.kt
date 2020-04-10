@@ -5,11 +5,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigation
 import bogomolov.aa.wordstrainer.R
 import bogomolov.aa.wordstrainer.android.TRANSLATION_DIRECTION
 import bogomolov.aa.wordstrainer.android.USE_GOOGLE_SHEET
 import bogomolov.aa.wordstrainer.android.getSetting
 import bogomolov.aa.wordstrainer.android.setSetting
+import bogomolov.aa.wordstrainer.databinding.ActivityMainBinding
 import bogomolov.aa.wordstrainer.repository.GoogleSheetsRepository
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -21,6 +26,9 @@ import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 
@@ -37,13 +45,18 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 
         val useGoogleSheet = getSetting<Boolean>(this, USE_GOOGLE_SHEET)!!
+        Log.i(
+            "test",
+            "MainActivity onCreate useGoogleSheet $useGoogleSheet hasCredential ${googleSheetsRepository.hasCredential()}"
+        )
         if (useGoogleSheet && !googleSheetsRepository.hasCredential()) {
             requestSignIn(this)
         }
         initTranslateDirection()
+
     }
 
     private fun initTranslateDirection() {
@@ -64,7 +77,10 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         val set = data?.extras
-        Log.i("test", "onActivityResult resultCode $resultCode googleSignInStatus: ${set?.get("googleSignInStatus")}")
+        Log.i(
+            "test",
+            "onActivityResult resultCode $resultCode googleSignInStatus: ${set?.get("googleSignInStatus")}"
+        )
         if (requestCode == REQUEST_SIGN_IN) {
             if (resultCode == RESULT_OK) {
                 Log.i("test", "getSignedInAccountFromIntent")

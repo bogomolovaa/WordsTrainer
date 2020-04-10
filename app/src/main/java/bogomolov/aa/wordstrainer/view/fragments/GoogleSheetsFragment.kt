@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
@@ -30,7 +31,7 @@ import javax.inject.Inject
 class GoogleSheetsFragment : Fragment() {
     @Inject
     internal lateinit var viewModelFactory: ViewModelFactory
-    private val viewModel: GoogleSheetsViewModel by activityViewModels { viewModelFactory }
+    private val viewModel: GoogleSheetsViewModel by viewModels { viewModelFactory }
     private lateinit var navController: NavController
 
     override fun onAttach(context: Context) {

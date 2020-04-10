@@ -19,12 +19,6 @@ class TranslationViewModel
         Log.i("test", "TranslationViewModel init")
     }
 
-    fun loadWords() {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.initWords()
-        }
-    }
-
     fun translate(text: String) {
         Log.i("test","translate")
         viewModelScope.launch(Dispatchers.IO) {

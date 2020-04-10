@@ -1,6 +1,9 @@
 package bogomolov.aa.wordstrainer.repository
 
+import android.content.Context
 import android.util.Log
+import bogomolov.aa.wordstrainer.android.TRANSLATION_DIRECTION
+import bogomolov.aa.wordstrainer.android.getSetting
 import bogomolov.aa.wordstrainer.repository.entity.Word
 import java.util.*
 import kotlin.collections.ArrayList
@@ -8,10 +11,10 @@ import kotlin.collections.HashMap
 
 const val MAX_RANK = 10
 
-abstract class Repository(private val translateProvider: YandexTranslateProvider) {
+abstract class Repository(private val context: Context, private val translateProvider: YandexTranslateProvider) {
 
-    protected val words: MutableList<Word> = ArrayList()
-    private var wordsMap: MutableMap<String, Word> = HashMap()
+    val words: MutableList<Word> = ArrayList()
+    var wordsMap: MutableMap<String, Word> = HashMap()
 
 
     fun translate(text: String): Word? {
@@ -19,6 +22,7 @@ abstract class Repository(private val translateProvider: YandexTranslateProvider
         if (word == null) {
             word = translateProvider.translate(text)
             if (word != null) {
+                word.direction = getSetting(context, TRANSLATION_DIRECTION)
                 wordsMap[text] = word
                 words.add(word)
                 addWord(word)

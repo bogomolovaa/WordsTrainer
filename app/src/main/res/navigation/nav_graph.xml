@@ -10,9 +10,6 @@
         <action
             android:id="@+id/action_translationFragment_to_repetitionFragment"
             app:destination="@id/repetitionFragment" />
-        <action
-            android:id="@+id/action_translationFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/repetitionFragment"

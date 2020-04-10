@@ -27,7 +27,7 @@ class GoogleSheetsRepository
 @Inject constructor(
     val context: Context,
     translateProvider: YandexTranslateProvider
-) : Repository(translateProvider) {
+) : Repository(context, translateProvider) {
 
     init {
         Log.i("test","GoogleSheetsRepository created")

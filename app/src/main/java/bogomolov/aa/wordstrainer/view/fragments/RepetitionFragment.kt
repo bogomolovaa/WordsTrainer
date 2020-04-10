@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
@@ -32,7 +33,7 @@ import javax.inject.Inject
 class RepetitionFragment : Fragment() {
     @Inject
     internal lateinit var viewModelFactory: ViewModelFactory
-    private val viewModel: RepetitionViewModel by activityViewModels { viewModelFactory }
+    private val viewModel: RepetitionViewModel by viewModels { viewModelFactory }
     private lateinit var navController: NavController
     private lateinit var binding: FragmentRepetitionBinding
     private var swipeBlocked = false
@@ -57,6 +58,8 @@ class RepetitionFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
         setHasOptionsMenu(true)
+
+        Log.i("test", "RepetitionFragment onCreateView")
 
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         NavigationUI.setupWithNavController(binding.toolbar, navController)
@@ -172,7 +175,10 @@ class RepetitionFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
+        if (item.itemId == R.id.translationFragmentAction) navController.navigate(R.id.translationFragment)
+        if (item.itemId == R.id.settingsFragmentAction) navController.navigate(R.id.settingsFragment)
+        return true
+        //return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
 
 }

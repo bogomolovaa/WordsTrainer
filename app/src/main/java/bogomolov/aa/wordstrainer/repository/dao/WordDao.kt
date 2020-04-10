@@ -11,8 +11,11 @@ interface WordDao {
     @Insert
     fun addWord(word: Word): Long
 
-    @Query("select * from Word")
-    fun loadAll(): List<Word>
+    @Insert
+    fun addWords(word: List<Word>)
+
+    @Query("select * from Word where direction = :direction")
+    fun loadAll(direction: String): List<Word>
 
     @Query("update Word set rank = :rank where id = :id")
     fun updateRank(id: Int, rank: Int)

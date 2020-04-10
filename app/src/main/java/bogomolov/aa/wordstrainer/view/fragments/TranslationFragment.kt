@@ -56,7 +56,6 @@ class TranslationFragment : Fragment() {
 
         Log.i("test", "TranslationFragment onCreateView")
 
-        if (getSetting<Boolean>(requireContext(), USE_GOOGLE_SHEET) != true) viewModel.loadWords()
 
 
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
@@ -85,9 +84,11 @@ class TranslationFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
+        if (item.itemId == R.id.repetitionFragmentAction) navController.navigate(R.id.repetitionFragment)
+        if (item.itemId == R.id.settingsFragmentAction) navController.navigate(R.id.settingsFragment)
+            return true
+        // return item.onNavDestinationSelected(navController)
     }
-
 
 
 }

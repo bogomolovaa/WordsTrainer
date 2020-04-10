@@ -20,6 +20,9 @@
     <string name="select_lang_translation">Select translation lang</string>
     <string name="word_to_translate">enter here</string>
     <string name="not_translated">Not translated</string>
+    <string name="import_words">Import words</string>
+    <string name="import_words_button">Import</string>
+
 
 
     <string name="en_lang">English</string>

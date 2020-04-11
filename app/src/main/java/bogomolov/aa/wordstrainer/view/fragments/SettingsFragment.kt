@@ -3,6 +3,7 @@ package bogomolov.aa.wordstrainer.view.fragments
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.getIntent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -92,7 +93,23 @@ class SettingsFragment() : Fragment() {
             viewModel.importWords()
         }
 
+
+        binding.exportButton.setOnClickListener {
+            binding.exportButton.visibility = View.GONE
+            binding.exportedIcon.visibility = View.VISIBLE
+            viewModel.exportWords()
+        }
+
+        binding.privacyPolicy.setOnClickListener { openPrivacyPolicy() }
+
+
         return binding.root
+    }
+
+    private fun openPrivacyPolicy() {
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data = Uri.parse("http://bogomolovaa.github.io/WordsTrainer/")
+        startActivity(i)
     }
 
 

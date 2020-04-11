@@ -26,13 +26,16 @@ class RoomRepository
         }
     }
 
-    override fun updateRank(word: Word, delta: Int) {
-        word.rank += delta
+    override fun update(word: Word) {
         db.wordsDao().updateRank(word.id, word.rank)
     }
 
     override fun addWord(word: Word) {
         word.id = db.wordsDao().addWord(word).toInt()
+    }
+
+    override fun delete(word: Word) {
+        db.wordsDao().delete(word.id)
     }
 
     override fun loadAllWords(): List<Word> {
@@ -41,8 +44,21 @@ class RoomRepository
         return db.wordsDao().loadAll(direction!!)
     }
 
-    fun addWords(words: List<Word>){
-        db.wordsDao().addWords(words)
+    fun import(words: List<Word>) {
+        val direction = getSetting<String>(context, TRANSLATION_DIRECTION)
+        db.wordsDao().addWords(words.mapNotNull { word ->
+            val existed = wordsMap[word.word]
+            if (existed != null) {
+                if (existed.rank != word.rank) {
+                    existed.apply { rank = word.rank }
+                } else {
+                    null
+                }
+            } else {
+                word.copy(id = 0, direction = direction)
+            }
+        })
+        initWords()
     }
 
 }

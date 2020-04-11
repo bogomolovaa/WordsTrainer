@@ -13,24 +13,26 @@ class RepetitionViewModel
 @Inject constructor(private val repository: Repository) : ViewModel() {
     var lastWord: Word? = null
 
+    fun deleteWord() {
+        val word = lastWord
+        if (word != null)
+            viewModelScope.launch(Dispatchers.IO) { repository.deleteWord(word) }
+    }
+
     fun nextWord(): Word? {
         lastWord = repository.nextWord()
         return lastWord
     }
 
     fun right() {
-        if (lastWord != null){
-            viewModelScope.launch(Dispatchers.IO){
-                repository.updateRank(lastWord!!, 1)
-            }
-        }
+        val word = lastWord
+        if (word != null)
+            viewModelScope.launch(Dispatchers.IO) { repository.updateRank(word, 1) }
     }
 
     fun wrong() {
-        if (lastWord != null){
-            viewModelScope.launch(Dispatchers.IO){
-                repository.updateRank(lastWord!!, -1)
-            }
-        }
+        val word = lastWord
+        if (word != null)
+            viewModelScope.launch(Dispatchers.IO) { repository.updateRank(word, -1) }
     }
 }

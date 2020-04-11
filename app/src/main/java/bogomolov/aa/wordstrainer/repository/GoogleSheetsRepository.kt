@@ -12,15 +12,13 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.sheets.v4.Sheets
-import com.google.api.services.sheets.v4.model.Spreadsheet
-import com.google.api.services.sheets.v4.model.SpreadsheetProperties
-import com.google.api.services.sheets.v4.model.ValueRange
+import com.google.api.services.sheets.v4.model.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Singleton
+
 
 @Singleton
 class GoogleSheetsRepository
@@ -30,7 +28,7 @@ class GoogleSheetsRepository
 ) : Repository(context, translateProvider) {
 
     init {
-        Log.i("test","GoogleSheetsRepository created")
+        Log.i("test", "GoogleSheetsRepository created")
     }
 
     private var credential: GoogleAccountCredential? = null
@@ -47,12 +45,19 @@ class GoogleSheetsRepository
 
     fun hasCredential() = credential != null
 
-    override fun updateRank(word: Word, delta: Int) {
-        word.rank += delta
+    override fun update(word: Word) {
         val googleSheetId = getGoogleSheetId()
         if (googleSheetId != null && credential != null) {
             if (sheetsService == null) sheetsService = getSheetsService()
-            updateRankCell(sheetsService!!, googleSheetId, word)
+            updateWords(sheetsService!!, googleSheetId, listOf(word))
+        }
+    }
+
+    override fun delete(word: Word) {
+        val googleSheetId = getGoogleSheetId()
+        if (googleSheetId != null && credential != null) {
+            if (sheetsService == null) sheetsService = getSheetsService()
+            updateWords(sheetsService!!, googleSheetId, listOf(word))
         }
     }
 
@@ -60,9 +65,9 @@ class GoogleSheetsRepository
         val googleSheetId = getGoogleSheetId()
         if (googleSheetId != null && credential != null) {
             if (sheetsService == null) sheetsService = getSheetsService()
-            addWordToGoogleSheets(sheetsService!!, googleSheetId, word)
-        }else{
-            Log.i("test","addWord googleSheetId $googleSheetId credential $credential")
+            addWordsToSheet(sheetsService!!, googleSheetId, listOf(word))
+        } else {
+            Log.i("test", "addWord googleSheetId $googleSheetId credential $credential")
         }
     }
 
@@ -74,6 +79,16 @@ class GoogleSheetsRepository
             return loadSheet(sheetsService!!, googleSheetId)
         }
         return listOf()
+    }
+
+    fun export(words: List<Word>) {
+        val googleSheetId = getGoogleSheetId()
+        if (googleSheetId != null && credential != null) {
+            if (sheetsService == null) sheetsService = getSheetsService()
+            exportToSheet(sheetsService!!, googleSheetId, words)
+        } else {
+            Log.i("test", "export googleSheetId $googleSheetId credential $credential")
+        }
     }
 
     private fun getGoogleSheetId() = getSetting<String>(context, GOOGLE_SHEET_ID)
@@ -97,7 +112,7 @@ class GoogleSheetsRepository
     }
 
     private fun loadSheet(service: Sheets, spreadsheetId: String): List<Word> {
-        val range = "A1:E"
+        val range = getRowRange()
         val response = service.spreadsheets().values().get(spreadsheetId, range).execute()
         val values =
             response.getValues()
@@ -115,6 +130,8 @@ class GoogleSheetsRepository
                         rank = row[3].toString().toInt(),
                         json = row[4] as String
                     )
+                if (row.size == 6) word.deleted =
+                    if (row[5].toString() == "") 0 else row[5].toString().toInt()
                 words += word
                 Log.i("test", "$word")
             }
@@ -122,41 +139,64 @@ class GoogleSheetsRepository
         return words
     }
 
-    private fun addWordToGoogleSheets(service: Sheets, spreadsheetId: String, word: Word) {
-        word.id = words.size + 1
-        val range = "A1:E"
-        val row1: MutableList<Any> = ArrayList()
-        row1.add(word.word)
-        row1.add(word.translation)
-        row1.add(word.id)
-        row1.add(word.rank)
-        row1.add(word.json)
+    private fun getValueRange(
+        words: List<Word>,
+        range: String? = null,
+        update: String? = null
+    ): ValueRange {
         val values = ArrayList<List<Any>>()
-        values.add(row1)
+        for (word in words) {
+            val row: MutableList<Any> = ArrayList()
+            if (update == null) {
+                row.add(word.word)
+                row.add(word.translation)
+                row.add(word.id)
+            }
+            if (update == null || update == "rank") row.add(word.rank)
+            if (update == null) row.add(word.json)
+            if (update == null || update == "deleted") row.add(word.deleted)
+            values.add(row)
+        }
         val valueRange = ValueRange()
-        valueRange.setMajorDimension("ROWS")
+        valueRange.majorDimension = "ROWS"
         valueRange.setValues(values)
+        if (range != null) valueRange.range = range
+        return valueRange
+    }
+
+    private fun addWordsToSheet(
+        service: Sheets,
+        spreadsheetId: String,
+        newWords: List<Word>
+    ) {
+        Log.i("test", "addWordsToGoogleSheets words.size ${words.size}")
+        for ((id, newWord) in newWords.withIndex()) newWord.id = words.size + 1 + id
+        val range = getRowRange()
+        val valueRange = getValueRange(newWords)
         val response = service.spreadsheets().values()
             .append(spreadsheetId, range, valueRange)
             .setValueInputOption("RAW")
             .execute()
-        Log.i("test", "added $word response $response")
+        Log.i("test", "added $newWords response $response")
     }
 
-    private fun updateRankCell(service: Sheets, spreadsheetId: String, word: Word) {
-        val range = "D${word.id}"
-        val row1: MutableList<Any> = ArrayList()
-        row1.add(word.rank)
-        val values = ArrayList<List<Any>>()
-        values.add(row1)
-        val valueRange = ValueRange()
-        valueRange.setMajorDimension("ROWS")
-        valueRange.setValues(values)
-        val response = service.spreadsheets().values()
-            .update(spreadsheetId, range, valueRange)
-            .setValueInputOption("RAW")
-            .execute()
-        Log.i("test", "updated $word")
+    private fun getRankRange(word: Word) = "D${word.id}"
+    private fun getDeletedRange(word: Word) = "F${word.id}"
+
+    private fun getRowRange() = "A1:F"
+
+    private fun updateWords(service: Sheets, spreadsheetId: String, words: List<Word>) {
+        Log.i("test","updateWords $words")
+        val batchRequest = BatchUpdateValuesRequest()
+        batchRequest.valueInputOption = "RAW"
+        batchRequest.data = words.map {
+            getValueRange(listOf(it), getRankRange(it), "rank")
+        } + words.map {
+            getValueRange(listOf(it), getDeletedRange(it), "deleted")
+        }
+        val updateResponse: BatchUpdateValuesResponse =
+            service.spreadsheets().values().batchUpdate(spreadsheetId, batchRequest).execute()
+        Log.i("test", "export updateResponse $updateResponse")
     }
 
     fun getAllSheets(): List<GoogleSheet> {
@@ -188,9 +228,7 @@ class GoogleSheetsRepository
                     SpreadsheetProperties()
                         .setTitle(name)
                 )
-
             spreadsheet = sheetsService!!.spreadsheets().create(spreadsheet).execute()
-
             Log.i("test", "ID: ${spreadsheet.spreadsheetId}")
             return spreadsheet.spreadsheetId
         } catch (e: Exception) {
@@ -198,6 +236,30 @@ class GoogleSheetsRepository
         }
         return null
     }
+
+    private fun exportToSheet(service: Sheets, spreadsheetId: String, words: List<Word>) {
+        val existedWords = ArrayList<Word>()
+        val newWords = ArrayList<Word>()
+        for (word in words) {
+            val existed = wordsMap[word.word]
+            if (existed != null) {
+                if (existed.rank != word.rank || existed.deleted != word.deleted) {
+                    existed.rank = word.rank
+                    existed.deleted = word.deleted
+                    existedWords += existed
+                }
+            } else {
+                newWords += word.copy(id = 0)
+            }
+        }
+        Log.i("test", "export: update: ${existedWords.size} add: ${newWords.size} ")
+        if (existedWords.size > 0) updateWords(service, spreadsheetId, existedWords)
+        if (newWords.size > 0) addWordsToSheet(service, spreadsheetId, newWords)
+        for (word in newWords) wordsMap[word.word] = word
+        this.words.addAll(newWords)
+        updateWordsRanger()
+    }
+
 
     companion object {
         private const val TYPE_GOOGLE_SHEETS = "application/vnd.google-apps.spreadsheet"

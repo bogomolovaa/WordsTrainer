@@ -1,5 +1,6 @@
 package bogomolov.aa.wordstrainer.view.fragments
 
+import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -7,6 +8,8 @@ import android.text.Html
 import android.text.Spanned
 import android.util.Log
 import android.view.*
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -33,6 +36,7 @@ class TranslationFragment : Fragment() {
     internal lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: TranslationViewModel by viewModels { viewModelFactory }
     private lateinit var navController: NavController
+    private lateinit var binding: FragmentTranslationBinding
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -43,7 +47,7 @@ class TranslationFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding: FragmentTranslationBinding = DataBindingUtil.inflate(
+        binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_translation,
             container,
@@ -52,6 +56,7 @@ class TranslationFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
+        (activity as AppCompatActivity).title = resources.getString(R.string.translation)
         setHasOptionsMenu(true)
 
         Log.i("test", "TranslationFragment onCreateView")
@@ -61,11 +66,7 @@ class TranslationFragment : Fragment() {
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         NavigationUI.setupWithNavController(binding.toolbar, navController)
 
-        binding.textInputLayout.setEndIconOnClickListener {
-            val text = binding.wordInput.text
-            Log.i("test", "click word $text")
-            if (text != null) viewModel.translate(text.toString())
-        }
+        binding.textInputLayout.setEndIconOnClickListener { translate() }
         viewModel.translationLiveData.observe(viewLifecycleOwner) {
             if (it != null) {
                 binding.translationText.text = getTranslation(it)
@@ -75,7 +76,25 @@ class TranslationFragment : Fragment() {
 
         }
 
+        binding.wordInput.setOnEditorActionListener { v, actionId, event ->
+            Log.i("test","actionId $actionId")
+            if (actionId == EditorInfo.IME_ACTION_GO) {
+                translate()
+                true
+            } else false
+
+        }
+
         return binding.root
+    }
+
+    private fun translate() {
+        val text = binding.wordInput.text
+        Log.i("test", "translate word $text")
+        if (text != null) viewModel.translate(text.toString())
+        val imm =
+            requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -86,8 +105,7 @@ class TranslationFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.repetitionFragmentAction) navController.navigate(R.id.repetitionFragment)
         if (item.itemId == R.id.settingsFragmentAction) navController.navigate(R.id.settingsFragment)
-            return true
-        // return item.onNavDestinationSelected(navController)
+        return true
     }
 
 

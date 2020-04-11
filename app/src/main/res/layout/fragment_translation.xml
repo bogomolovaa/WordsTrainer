@@ -32,6 +32,7 @@
             android:layout_height="wrap_content"
             app:endIconDrawable="@drawable/send_icon"
             app:endIconMode="custom"
+            app:endIconTint="@color/colorPrimaryDark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar">
@@ -42,6 +43,7 @@
                 android:layout_height="wrap_content"
                 android:background="#FFFFFF"
                 android:hint="@string/word_to_translate"
+                android:imeOptions="actionGo"
                 android:inputType="text"
                 android:lines="1" />
         </com.google.android.material.textfield.TextInputLayout>

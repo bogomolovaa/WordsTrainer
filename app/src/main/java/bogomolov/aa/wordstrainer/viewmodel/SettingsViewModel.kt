@@ -29,16 +29,14 @@ class SettingsViewModel
     }
 
     fun importWords() {
-        val direction = getSetting<String>(context, TRANSLATION_DIRECTION)
-        val words = ArrayList<Word>()
-        for (word in googleSheetsRepository.words) {
-            Log.i("test", "add $word")
-            if (!roomRepository.wordsMap.containsKey(word.word))
-                words.add(word.copy(id = 0, direction = direction))
-        }
         viewModelScope.launch(Dispatchers.IO) {
-            roomRepository.addWords(words)
-            roomRepository.initWords()
+            roomRepository.import(googleSheetsRepository.words)
+        }
+    }
+
+    fun exportWords() {
+        viewModelScope.launch(Dispatchers.IO) {
+            googleSheetsRepository.export(roomRepository.words)
         }
     }
 

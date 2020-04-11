@@ -104,6 +104,11 @@ class RepetitionFragment : Fragment() {
             false
         }
 
+        binding.deletWordIcon.setOnClickListener {
+            viewModel.deleteWord()
+            showNextWord()
+        }
+
         setColor(R.color.neutral)
         showNextWord()
 
@@ -161,6 +166,9 @@ class RepetitionFragment : Fragment() {
         if (word != null) {
             binding.wordText.text = word.word
             binding.wordMainText.text = word.word
+        }else{
+            binding.wordText.text = ""
+            binding.wordMainText.text = ""
         }
     }
 

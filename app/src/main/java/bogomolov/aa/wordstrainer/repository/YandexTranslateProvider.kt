@@ -34,7 +34,7 @@ class YandexTranslateProvider @Inject constructor(private val context: Context) 
 
     private fun getUrl(text: String): String {
         val direction = getSetting<String>(context, TRANSLATION_DIRECTION)
-        val lang = Locale.getDefault().language
+        val lang = direction!!.split("-")[1]
         return "https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key=dict.1.1.20190813T074253Z.2531cef640eec2d6.66f19e3b927bd253c4e6c310f66b91bd14ebadc7&lang=$direction&ui=$lang&text=$text"
     }
 }

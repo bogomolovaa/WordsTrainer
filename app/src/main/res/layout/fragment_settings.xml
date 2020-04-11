@@ -131,6 +131,41 @@ xmlns:tools="http://schemas.android.com/tools">
             app:srcCompat="@drawable/ok_icon"
             tools:visibility="visible" />
 
+        <TextView
+            android:id="@+id/textViewExport"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/export_words"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+        <Button
+            android:id="@+id/exportButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:backgroundTint="#FFFFFF"
+            android:text="@string/export_words_button"
+            android:textColor="#8F8F8F"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewExport"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textViewExport"
+            app:layout_constraintVertical_bias="0.482" />
+
+        <ImageView
+            android:id="@+id/exportedIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewExport"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textViewExport"
+            app:srcCompat="@drawable/ok_icon"
+            tools:visibility="visible" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

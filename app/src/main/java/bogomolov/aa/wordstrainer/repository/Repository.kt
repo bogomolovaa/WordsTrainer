@@ -4,17 +4,21 @@ import android.content.Context
 import android.util.Log
 import bogomolov.aa.wordstrainer.android.TRANSLATION_DIRECTION
 import bogomolov.aa.wordstrainer.android.getSetting
+import bogomolov.aa.wordstrainer.model.WordsRanger
 import bogomolov.aa.wordstrainer.repository.entity.Word
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 const val MAX_RANK = 10
 
-abstract class Repository(private val context: Context, private val translateProvider: YandexTranslateProvider) {
+abstract class Repository(
+    private val context: Context,
+    private val translateProvider: YandexTranslateProvider
+) {
 
     val words: MutableList<Word> = ArrayList()
-    var wordsMap: MutableMap<String, Word> = HashMap()
+    protected var wordsMap: MutableMap<String, Word> = HashMap()
+    private var wordsRanger: WordsRanger? = null
 
 
     fun translate(text: String): Word? {
@@ -23,28 +27,34 @@ abstract class Repository(private val context: Context, private val translatePro
             word = translateProvider.translate(text)
             if (word != null) {
                 word.direction = getSetting(context, TRANSLATION_DIRECTION)
-                wordsMap[text] = word
-                words.add(word)
                 addWord(word)
+                words.add(word)
+                wordsMap[text] = word
+                wordsRanger?.addWord(word)
             }
         } else {
-            updateRank(word, -1)
+            word.rank -= 1
+            update(word)
         }
         return word
     }
 
-    fun nextWord(): Word? {
-        val wordsToRemember = ArrayList<Word>()
-        for (word in words) if (word.rank < MAX_RANK)
-            wordsToRemember.add(word)
-        Log.i("test","nextWord wordsToRemember $wordsToRemember")
-        if (wordsToRemember.size == 0) return null
-        val nextId = Random().nextInt(wordsToRemember.size)
-        return wordsToRemember[nextId]
+    fun nextWord() = wordsRanger?.nextWord()
+
+    fun deleteWord(word: Word) {
+        word.deleted = 1
+        delete(word)
+        wordsRanger?.deleteWord(word)
     }
 
-    abstract fun updateRank(word: Word, delta: Int)
+    fun updateRank(word: Word, delta: Int) {
+        wordsRanger?.deleteWord(word)
+        word.rank += delta
+        update(word)
+    }
 
+    protected abstract fun delete(word: Word)
+    protected abstract fun update(word: Word)
     protected abstract fun addWord(word: Word)
     protected abstract fun loadAllWords(): List<Word>
 
@@ -57,7 +67,11 @@ abstract class Repository(private val context: Context, private val translatePro
             Log.i("test", "$word")
             wordsMap[word.word] = word
         }
+        updateWordsRanger()
     }
 
+    protected fun updateWordsRanger() {
+        wordsRanger = WordsRanger(words)
+    }
 
 }

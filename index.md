@@ -9,6 +9,7 @@ If you choose to use the app, then you agree to the collection and use of inform
 <h3>Information Collection and Use</h3>
 
 This app doesn't collect any personal information
+<p>
 When using Goole Sheets synchronization, the data is used on user's device only and not transfered anywhere
 
 

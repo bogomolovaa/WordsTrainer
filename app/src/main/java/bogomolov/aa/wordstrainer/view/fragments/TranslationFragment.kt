@@ -59,10 +59,6 @@ class TranslationFragment : Fragment() {
         (activity as AppCompatActivity).title = resources.getString(R.string.translation)
         setHasOptionsMenu(true)
 
-        Log.i("test", "TranslationFragment onCreateView")
-
-
-
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         NavigationUI.setupWithNavController(binding.toolbar, navController)
 
@@ -77,7 +73,6 @@ class TranslationFragment : Fragment() {
         }
 
         binding.wordInput.setOnEditorActionListener { v, actionId, event ->
-            Log.i("test","actionId $actionId")
             if (actionId == EditorInfo.IME_ACTION_GO) {
                 translate()
                 true
@@ -90,7 +85,6 @@ class TranslationFragment : Fragment() {
 
     private fun translate() {
         val text = binding.wordInput.text
-        Log.i("test", "translate word $text")
         if (text != null) viewModel.translate(text.toString())
         val imm =
             requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -127,6 +121,8 @@ private fun translationToHtml(word: Word): String? {
     if (translation?.def != null)
         for (def in translation.def!!.iterator()) {
             sb.append("<p>\t")
+            sb.append("<font color='#00A'><i>${def.ts}</i></font>\t")
+            sb.append("<p>\t")
             sb.append("<strong>" + def.text.toString() + "</strong> <font color='#070'><i>" + def.pos.toString() + "</i></font>")
             var counter = 1
             for (tr in def.tr!!) {
@@ -140,6 +136,5 @@ private fun translationToHtml(word: Word): String? {
             }
             sb.append("</p>")
         }
-    Log.i("test", sb.toString())
     return sb.toString()
 }

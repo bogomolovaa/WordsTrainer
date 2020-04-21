@@ -65,7 +65,6 @@ class GoogleSheetsFragment : Fragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = adapter
         viewModel.sheetsLiveData.observe(viewLifecycleOwner){
-            Log.i("test","submitList")
             adapter.submitList(it)
         }
 

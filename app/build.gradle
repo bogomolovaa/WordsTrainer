@@ -4,6 +4,14 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('C:\\android\\key-store\\key_store.jks')
+            storePassword 'fmbfmipt'
+            keyAlias = 'key_wordstrainer'
+            keyPassword 'fmbfmipt'
+        }
+    }
     compileSdkVersion 29
     buildToolsVersion "29.0.1"
 
@@ -28,6 +36,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 

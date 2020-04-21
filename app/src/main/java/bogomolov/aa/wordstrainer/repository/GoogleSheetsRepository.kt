@@ -2,6 +2,7 @@ package bogomolov.aa.wordstrainer.repository
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import bogomolov.aa.wordstrainer.R
 import bogomolov.aa.wordstrainer.android.GOOGLE_SHEET_ID
 import bogomolov.aa.wordstrainer.android.getSetting
@@ -16,6 +17,7 @@ import com.google.api.services.sheets.v4.model.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,17 +29,12 @@ class GoogleSheetsRepository
     translateProvider: YandexTranslateProvider
 ) : Repository(context, translateProvider) {
 
-    init {
-        Log.i("test", "GoogleSheetsRepository created")
-    }
-
     private var credential: GoogleAccountCredential? = null
     private var sheetsService: Sheets? = null
     private var driveService: Drive? = null
 
     fun setCredential(credential: GoogleAccountCredential) {
         this.credential = credential
-        Log.i("test", "set credential $credential")
         GlobalScope.launch(Dispatchers.IO) {
             initWords()
         }
@@ -66,13 +63,10 @@ class GoogleSheetsRepository
         if (googleSheetId != null && credential != null) {
             if (sheetsService == null) sheetsService = getSheetsService()
             addWordsToSheet(sheetsService!!, googleSheetId, listOf(word))
-        } else {
-            Log.i("test", "addWord googleSheetId $googleSheetId credential $credential")
         }
     }
 
     override fun loadAllWords(): List<Word> {
-        Log.i("test", "GoogleSheetsRepository loadAllWords()")
         val googleSheetId = getGoogleSheetId()
         if (googleSheetId != null && credential != null) {
             if (sheetsService == null) sheetsService = getSheetsService()
@@ -86,8 +80,6 @@ class GoogleSheetsRepository
         if (googleSheetId != null && credential != null) {
             if (sheetsService == null) sheetsService = getSheetsService()
             exportToSheet(sheetsService!!, googleSheetId, words)
-        } else {
-            Log.i("test", "export googleSheetId $googleSheetId credential $credential")
         }
     }
 
@@ -112,29 +104,31 @@ class GoogleSheetsRepository
     }
 
     private fun loadSheet(service: Sheets, spreadsheetId: String): List<Word> {
-        val range = getRowRange()
-        val response = service.spreadsheets().values().get(spreadsheetId, range).execute()
-        val values =
-            response.getValues()
         val words = ArrayList<Word>()
-        if (values == null || values.isEmpty()) {
-            Log.i("test", "No data found.")
-        } else {
-            Log.i("test", "Values $values")
-            for (row in values) {
-                val word =
-                    Word(
-                        word = row[0] as String,
-                        translation = row[1] as String,
-                        id = row[2].toString().toInt(),
-                        rank = row[3].toString().toInt(),
-                        json = row[4] as String
-                    )
-                if (row.size == 6) word.deleted =
-                    if (row[5].toString() == "") 0 else row[5].toString().toInt()
-                words += word
-                Log.i("test", "$word")
+        val range = getRowRange()
+        try {
+            val response = service.spreadsheets().values().get(spreadsheetId, range).execute()
+            val values = response.getValues()
+            if (values == null || values.isEmpty()) {
+                //Log.i("test", "No data found.")
+            } else {
+                for (row in values) {
+                    val word =
+                        Word(
+                            word = row[0] as String,
+                            translation = row[1] as String,
+                            id = row[2].toString().toInt(),
+                            rank = row[3].toString().toInt(),
+                            json = row[4] as String
+                        )
+                    if (row.size == 6) word.deleted =
+                        if (row[5].toString() == "") 0 else row[5].toString().toInt()
+                    words += word
+                    //Log.i("test", "$word")
+                }
             }
+        } catch (e: UnknownHostException) {
+            onError()
         }
         return words
     }
@@ -169,15 +163,27 @@ class GoogleSheetsRepository
         spreadsheetId: String,
         newWords: List<Word>
     ) {
-        Log.i("test", "addWordsToGoogleSheets words.size ${words.size}")
         for ((id, newWord) in newWords.withIndex()) newWord.id = words.size + 1 + id
         val range = getRowRange()
         val valueRange = getValueRange(newWords)
-        val response = service.spreadsheets().values()
-            .append(spreadsheetId, range, valueRange)
-            .setValueInputOption("RAW")
-            .execute()
-        Log.i("test", "added $newWords response $response")
+        try {
+            val response = service.spreadsheets().values()
+                .append(spreadsheetId, range, valueRange)
+                .setValueInputOption("RAW")
+                .execute()
+        } catch (e: UnknownHostException) {
+            onError()
+        }
+    }
+
+    private fun onError() {
+        GlobalScope.launch(Dispatchers.Main) {
+            Toast.makeText(
+                context,
+                context.resources.getString(R.string.no_connection),
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     private fun getRankRange(word: Word) = "D${word.id}"
@@ -186,7 +192,6 @@ class GoogleSheetsRepository
     private fun getRowRange() = "A1:F"
 
     private fun updateWords(service: Sheets, spreadsheetId: String, words: List<Word>) {
-        Log.i("test","updateWords $words")
         val batchRequest = BatchUpdateValuesRequest()
         batchRequest.valueInputOption = "RAW"
         batchRequest.data = words.map {
@@ -194,27 +199,31 @@ class GoogleSheetsRepository
         } + words.map {
             getValueRange(listOf(it), getDeletedRange(it), "deleted")
         }
-        val updateResponse: BatchUpdateValuesResponse =
-            service.spreadsheets().values().batchUpdate(spreadsheetId, batchRequest).execute()
-        Log.i("test", "export updateResponse $updateResponse")
+        try {
+            val updateResponse: BatchUpdateValuesResponse =
+                service.spreadsheets().values().batchUpdate(spreadsheetId, batchRequest).execute()
+        } catch (e: UnknownHostException) {
+            onError()
+        }
     }
 
     fun getAllSheets(): List<GoogleSheet> {
-        Log.i("test", "getAllSheets")
-        if (driveService == null) driveService = getDriveService()
-        val filesList = driveService!!.files().list()
-            .setQ("mimeType ='${TYPE_GOOGLE_SHEETS}'")
-            .setSpaces("drive")
-            .setFields("files(id, name,size)")
-            .execute()
         val googleSheets = ArrayList<GoogleSheet>()
-        if (filesList != null) {
-            for (file in filesList.files)
-                googleSheets += GoogleSheet(file.name, file.id)
-            Log.i("test", "getAllSheets size ${googleSheets.size}")
-        } else {
-            Log.i("test", "null filesList")
-        }
+        if (driveService == null) driveService = getDriveService()
+        if (driveService != null)
+            try {
+                val filesList = driveService!!.files().list()
+                    .setQ("mimeType ='${TYPE_GOOGLE_SHEETS}'")
+                    .setSpaces("drive")
+                    .setFields("files(id, name,size)")
+                    .execute()
+                if (filesList != null) {
+                    for (file in filesList.files)
+                        googleSheets += GoogleSheet(file.name, file.id)
+                }
+            } catch (e: UnknownHostException) {
+                onError()
+            }
         return googleSheets
     }
 
@@ -222,17 +231,15 @@ class GoogleSheetsRepository
     fun createSpreadsheet(name: String): String? {
         try {
             if (sheetsService == null) sheetsService = getSheetsService()
-            Log.i("test", "createSpreadsheet")
             var spreadsheet = Spreadsheet()
                 .setProperties(
                     SpreadsheetProperties()
                         .setTitle(name)
                 )
             spreadsheet = sheetsService!!.spreadsheets().create(spreadsheet).execute()
-            Log.i("test", "ID: ${spreadsheet.spreadsheetId}")
             return spreadsheet.spreadsheetId
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } catch (e: UnknownHostException) {
+            onError()
         }
         return null
     }
@@ -252,12 +259,16 @@ class GoogleSheetsRepository
                 newWords += word.copy(id = 0)
             }
         }
-        Log.i("test", "export: update: ${existedWords.size} add: ${newWords.size} ")
-        if (existedWords.size > 0) updateWords(service, spreadsheetId, existedWords)
-        if (newWords.size > 0) addWordsToSheet(service, spreadsheetId, newWords)
-        for (word in newWords) wordsMap[word.word] = word
-        this.words.addAll(newWords)
-        updateWordsRanger()
+        //Log.i("test", "export: update: ${existedWords.size} add: ${newWords.size} ")
+        try {
+            if (existedWords.size > 0) updateWords(service, spreadsheetId, existedWords)
+            if (newWords.size > 0) addWordsToSheet(service, spreadsheetId, newWords)
+            for (word in newWords) wordsMap[word.word] = word
+            this.words.addAll(newWords)
+            updateWordsRanger()
+        } catch (e: UnknownHostException) {
+            onError()
+        }
     }
 
 

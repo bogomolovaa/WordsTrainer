@@ -39,7 +39,6 @@ class RoomRepository
     }
 
     override fun loadAllWords(): List<Word> {
-        Log.i("test", "RoomRepository loadAllWords()")
         val direction = getSetting<String>(context, TRANSLATION_DIRECTION)
         return db.wordsDao().loadAll(direction!!)
     }

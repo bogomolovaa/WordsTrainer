@@ -62,11 +62,7 @@ abstract class Repository(
         words.clear()
         wordsMap.clear()
         words.addAll(loadAllWords())
-        Log.i("test", "loaded words ${words.size}")
-        for (word in words) {
-            Log.i("test", "$word")
-            wordsMap[word.word] = word
-        }
+        for (word in words) wordsMap[word.word] = word
         updateWordsRanger()
     }
 

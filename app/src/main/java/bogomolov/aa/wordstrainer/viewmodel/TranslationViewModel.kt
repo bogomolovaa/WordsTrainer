@@ -15,12 +15,7 @@ class TranslationViewModel
 @Inject constructor(private val repository: Repository) : ViewModel() {
     val translationLiveData = MutableLiveData<Word>()
 
-    init {
-        Log.i("test", "TranslationViewModel init")
-    }
-
     fun translate(text: String) {
-        Log.i("test","translate")
         viewModelScope.launch(Dispatchers.IO) {
             translationLiveData.postValue(repository.translate(text))
         }

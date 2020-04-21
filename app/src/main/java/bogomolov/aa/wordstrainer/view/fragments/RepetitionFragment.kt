@@ -59,8 +59,6 @@ class RepetitionFragment : Fragment() {
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
         setHasOptionsMenu(true)
 
-        Log.i("test", "RepetitionFragment onCreateView")
-
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         NavigationUI.setupWithNavController(binding.toolbar, navController)
 

@@ -29,7 +29,6 @@ class WordsRanger(words: List<Word>) {
     }
 
     fun nextWord(): Word? {
-        Log.i("test","minRank $minRank maxRank $maxRank")
         for (rank in minRank..maxRank) {
             val rankList = rankMap[rank]
             if (rankList != null && rankList.words.isNotEmpty()) {

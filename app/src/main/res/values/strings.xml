@@ -24,6 +24,9 @@
     <string name="import_words_button">Import</string>
     <string name="export_words">Export words</string>
     <string name="export_words_button">Export</string>
+    <string name="no_connection">No Network connection</string>
+    <string name="sign_in_failed">Google Sign In failed</string>
+
 
 
     <string name="en_lang">English</string>

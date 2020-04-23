@@ -1,7 +1,6 @@
 package bogomolov.aa.wordstrainer.repository
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import bogomolov.aa.wordstrainer.R
 import bogomolov.aa.wordstrainer.android.GOOGLE_SHEET_ID
@@ -17,6 +16,7 @@ import com.google.api.services.sheets.v4.model.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -128,7 +128,9 @@ class GoogleSheetsRepository
                 }
             }
         } catch (e: UnknownHostException) {
-            onError()
+            noConnectionError()
+        }catch (ee: SocketTimeoutException){
+            connectionTimeoutException()
         }
         return words
     }
@@ -172,11 +174,23 @@ class GoogleSheetsRepository
                 .setValueInputOption("RAW")
                 .execute()
         } catch (e: UnknownHostException) {
-            onError()
+            noConnectionError()
+        }catch (ee: SocketTimeoutException){
+            connectionTimeoutException()
         }
     }
 
-    private fun onError() {
+    private fun noConnectionError() {
+        GlobalScope.launch(Dispatchers.Main) {
+            Toast.makeText(
+                context,
+                context.resources.getString(R.string.no_connection),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    private fun connectionTimeoutException() {
         GlobalScope.launch(Dispatchers.Main) {
             Toast.makeText(
                 context,
@@ -203,7 +217,9 @@ class GoogleSheetsRepository
             val updateResponse: BatchUpdateValuesResponse =
                 service.spreadsheets().values().batchUpdate(spreadsheetId, batchRequest).execute()
         } catch (e: UnknownHostException) {
-            onError()
+            noConnectionError()
+        } catch (ee: SocketTimeoutException) {
+            connectionTimeoutException()
         }
     }
 
@@ -222,7 +238,9 @@ class GoogleSheetsRepository
                         googleSheets += GoogleSheet(file.name, file.id)
                 }
             } catch (e: UnknownHostException) {
-                onError()
+                noConnectionError()
+            } catch (ee: SocketTimeoutException) {
+                connectionTimeoutException()
             }
         return googleSheets
     }
@@ -239,7 +257,9 @@ class GoogleSheetsRepository
             spreadsheet = sheetsService!!.spreadsheets().create(spreadsheet).execute()
             return spreadsheet.spreadsheetId
         } catch (e: UnknownHostException) {
-            onError()
+            noConnectionError()
+        }catch (ee: SocketTimeoutException){
+            connectionTimeoutException()
         }
         return null
     }
@@ -267,7 +287,9 @@ class GoogleSheetsRepository
             this.words.addAll(newWords)
             updateWordsRanger()
         } catch (e: UnknownHostException) {
-            onError()
+            noConnectionError()
+        }catch (ee: SocketTimeoutException){
+            connectionTimeoutException()
         }
     }
 

@@ -117,24 +117,31 @@ fun getTranslation(word: Word): Spanned =
 
 private fun translationToHtml(word: Word): String? {
     val sb = StringBuilder()
-    val translation = fromJson(word.json)
-    if (translation?.def != null)
-        for (def in translation.def!!.iterator()) {
-            sb.append("<p>\t")
-            sb.append("<font color='#00A'><i>${def.ts}</i></font>\t")
-            sb.append("<p>\t")
-            sb.append("<strong>" + def.text.toString() + "</strong> <font color='#070'><i>" + def.pos.toString() + "</i></font>")
-            var counter = 1
-            for (tr in def.tr!!) {
-                val syns = if (tr.syn != null) tr.syn.toString() else ""
-                sb.append(
-                    "<p>\t\t\t" + counter++ + " " + tr.text + (if (syns.length > 0) ", " + syns.substring(
-                        1,
-                        syns.length - 1
-                    ) else "") + "</p>"
-                )
+    if(word.json.startsWith("{\"head\"")) {
+        val translation = fromJson(word.json)
+        if (translation?.def != null)
+            for (def in translation.def!!.iterator()) {
+                //Log.i("test","def.ts ${def.ts}")
+                sb.append("<p>\t")
+                sb.append("<font color='#00A'><i>${def.ts}</i></font>\t")
+                sb.append("<p>\t")
+                sb.append("<strong>" + def.text.toString() + "</strong> <font color='#070'><i>" + def.pos.toString() + "</i></font>")
+                var counter = 1
+                for (tr in def.tr!!) {
+                    val syns = if (tr.syn != null) tr.syn.toString() else ""
+                    sb.append(
+                        "<p>\t\t\t" + counter++ + " " + tr.text + (if (syns.length > 0) ", " + syns.substring(
+                            1,
+                            syns.length - 1
+                        ) else "") + "</p>"
+                    )
+                }
+                sb.append("</p>")
             }
-            sb.append("</p>")
-        }
+    }else{
+        sb.append(word.json.replace("{\n","{<br>")
+            .replace("\n}","<br>}")
+            .replace("\n ","<br>&nbsp;").replace("\n","<p>").replace(" ","&nbsp;"));
+    }
     return sb.toString()
 }

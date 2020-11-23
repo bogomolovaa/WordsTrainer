@@ -15,12 +15,6 @@ class RepetitionViewModel
     var lastWord: Word? = null
     var counterLiveData = MutableLiveData<Int>().apply { value = 0 }
 
-    fun deleteWord() {
-        val word = lastWord
-        if (word != null)
-            viewModelScope.launch(Dispatchers.IO) { repository.deleteWord(word) }
-    }
-
     fun nextWord(): Word? {
         lastWord = repository.nextWord()
         return lastWord

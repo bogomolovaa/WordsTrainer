@@ -41,19 +41,12 @@ abstract class Repository(
 
     fun nextWord() = wordsRanger?.nextWord()
 
-    fun deleteWord(word: Word) {
-        word.deleted = 1
-        delete(word)
-        wordsRanger?.deleteWord(word)
-    }
-
     fun updateRank(word: Word, delta: Int) {
         wordsRanger?.deleteWord(word)
         word.rank += delta
         update(word)
     }
 
-    protected abstract fun delete(word: Word)
     protected abstract fun update(word: Word)
     protected abstract fun addWord(word: Word)
     protected abstract fun loadAllWords(): List<Word>

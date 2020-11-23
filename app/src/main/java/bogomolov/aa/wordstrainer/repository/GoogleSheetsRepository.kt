@@ -50,14 +50,6 @@ class GoogleSheetsRepository
         }
     }
 
-    override fun delete(word: Word) {
-        val googleSheetId = getGoogleSheetId()
-        if (googleSheetId != null && credential != null) {
-            if (sheetsService == null) sheetsService = getSheetsService()
-            updateWords(sheetsService!!, googleSheetId, listOf(word))
-        }
-    }
-
     override fun addWord(word: Word) {
         val googleSheetId = getGoogleSheetId()
         if (googleSheetId != null && credential != null) {
@@ -118,7 +110,7 @@ class GoogleSheetsRepository
                             word = row[0] as String,
                             translation = row[1] as String,
                             id = row[2].toString().toInt(),
-                            rank = row[3].toString().toInt(),
+                            rank = with(row[3] as String) { if (equals("")) "0" else this }.toInt(),
                             json = row[4] as String
                         )
                     if (row.size == 6) word.deleted =
@@ -129,7 +121,7 @@ class GoogleSheetsRepository
             }
         } catch (e: UnknownHostException) {
             noConnectionError()
-        }catch (ee: SocketTimeoutException){
+        } catch (ee: SocketTimeoutException) {
             connectionTimeoutException()
         }
         return words
@@ -175,7 +167,7 @@ class GoogleSheetsRepository
                 .execute()
         } catch (e: UnknownHostException) {
             noConnectionError()
-        }catch (ee: SocketTimeoutException){
+        } catch (ee: SocketTimeoutException) {
             connectionTimeoutException()
         }
     }
@@ -258,7 +250,7 @@ class GoogleSheetsRepository
             return spreadsheet.spreadsheetId
         } catch (e: UnknownHostException) {
             noConnectionError()
-        }catch (ee: SocketTimeoutException){
+        } catch (ee: SocketTimeoutException) {
             connectionTimeoutException()
         }
         return null
@@ -270,9 +262,8 @@ class GoogleSheetsRepository
         for (word in words) {
             val existed = wordsMap[word.word]
             if (existed != null) {
-                if (existed.rank != word.rank || existed.deleted != word.deleted) {
+                if (existed.rank != word.rank) {
                     existed.rank = word.rank
-                    existed.deleted = word.deleted
                     existedWords += existed
                 }
             } else {
@@ -288,7 +279,7 @@ class GoogleSheetsRepository
             updateWordsRanger()
         } catch (e: UnknownHostException) {
             noConnectionError()
-        }catch (ee: SocketTimeoutException){
+        } catch (ee: SocketTimeoutException) {
             connectionTimeoutException()
         }
     }

@@ -1,9 +1,6 @@
 package bogomolov.aa.wordstrainer.repository.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import bogomolov.aa.wordstrainer.repository.entity.Word
 
 @Dao
@@ -21,7 +18,6 @@ interface WordDao {
     @Query("update Word set rank = :rank where id = :id")
     fun updateRank(id: Int, rank: Int)
 
-    @Query("update Word set deleted = 1 where id = :id")
-    fun delete(id: Int)
-
+    @Query("DELETE FROM Word")
+    fun deleteAll()
 }

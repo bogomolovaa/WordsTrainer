@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
+import android.text.SpannableString
 import android.text.Spanned
 import android.util.Log
 import android.view.*
@@ -105,19 +106,25 @@ class TranslationFragment : Fragment() {
 
 }
 
-fun getTranslation(word: Word): Spanned =
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        Html.fromHtml(
-            translationToHtml(word),
-            Html.FROM_HTML_MODE_LEGACY
-        )
+fun getTranslation(word: Word): Spanned {
+    return if (word.json.startsWith("{\"head\"")) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Html.fromHtml(
+                translationToHtml(word),
+                Html.FROM_HTML_MODE_LEGACY
+            )
+        } else {
+            Html.fromHtml(translationToHtml(word))
+        }
     } else {
-        Html.fromHtml(translationToHtml(word))
+        SpannableString(word.json)
     }
+}
+
 
 private fun translationToHtml(word: Word): String? {
     val sb = StringBuilder()
-    if(word.json.startsWith("{\"head\"")) {
+    if (word.json.startsWith("{\"head\"")) {
         val translation = fromJson(word.json)
         if (translation?.def != null)
             for (def in translation.def!!.iterator()) {
@@ -138,10 +145,12 @@ private fun translationToHtml(word: Word): String? {
                 }
                 sb.append("</p>")
             }
-    }else{
-        sb.append(word.json.replace("{\n","{<br>")
-            .replace("\n}","<br>}")
-            .replace("\n ","<br>&nbsp;").replace("\n","<p>").replace(" ","&nbsp;"));
+    } else {
+        sb.append(
+            word.json.replace("{\n", "{<br>")
+                .replace("\n}", "<br>}")
+                .replace("\n ", "<br>&nbsp;").replace("\n", "<p>").replace(" ", "&nbsp;")
+        );
     }
     return sb.toString()
 }

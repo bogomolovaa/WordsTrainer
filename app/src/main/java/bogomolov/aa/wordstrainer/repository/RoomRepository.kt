@@ -34,10 +34,6 @@ class RoomRepository
         word.id = db.wordsDao().addWord(word).toInt()
     }
 
-    override fun delete(word: Word) {
-        db.wordsDao().delete(word.id)
-    }
-
     override fun loadAllWords(): List<Word> {
         val direction = getSetting<String>(context, TRANSLATION_DIRECTION)
         return db.wordsDao().loadAll(direction!!)
@@ -45,18 +41,8 @@ class RoomRepository
 
     fun import(words: List<Word>) {
         val direction = getSetting<String>(context, TRANSLATION_DIRECTION)
-        db.wordsDao().addWords(words.mapNotNull { word ->
-            val existed = wordsMap[word.word]
-            if (existed != null) {
-                if (existed.rank != word.rank) {
-                    existed.apply { rank = word.rank }
-                } else {
-                    null
-                }
-            } else {
-                word.copy(id = 0, direction = direction)
-            }
-        })
+        db.wordsDao().deleteAll()
+        db.wordsDao().addWords(words.map { it.copy(id = 0, direction = direction) })
         initWords()
     }
 

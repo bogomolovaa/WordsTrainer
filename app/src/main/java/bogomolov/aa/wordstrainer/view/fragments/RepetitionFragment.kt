@@ -102,11 +102,6 @@ class RepetitionFragment : Fragment() {
             false
         }
 
-        binding.deletWordIcon.setOnClickListener {
-            viewModel.deleteWord()
-            showNextWord()
-        }
-
         setColor(R.color.neutral)
         showNextWord()
 

@@ -9,36 +9,32 @@ import bogomolov.aa.wordstrainer.repository.*
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
 
 @Module
-abstract class MainModule {
+class MainModule {
 
-    @Module
-    companion object {
-        @JvmStatic
-        @Provides
-        fun providesAppDatabase(application: Application): AppDatabase =
-            Room.databaseBuilder(
-                application,
-                AppDatabase::class.java,
-                DB_NAME
-            ).fallbackToDestructiveMigration().build()
+    @Provides
+    fun providesContext(application: Application): Context = application
 
-        @JvmStatic
-        @Provides
-        fun providesContext(application: Application): Context = application
+    @Singleton
+    @Provides
+    fun providesAppDatabase(application: Application): AppDatabase =
+        Room.databaseBuilder(
+            application,
+            AppDatabase::class.java,
+            DB_NAME
+        ).fallbackToDestructiveMigration().build()
 
-        @JvmStatic
-        @Provides
-        fun providesRepository(
-            application: Application,
-            googleSheetsRepository: GoogleSheetsRepository,
-            roomRepository: RoomRepository
-        ): Repository {
-            val useGoogleSheet = getSetting<Boolean>(application, USE_GOOGLE_SHEET)!!
-            return if (useGoogleSheet)
-                googleSheetsRepository
-            else roomRepository
-        }
+    @Singleton
+    @Provides
+    fun providesRepository(
+        application: Application,
+        googleSheetsRepository: GoogleSheetsRepository,
+        roomRepository: RoomRepository
+    ): Repository {
+        val useGoogleSheet = getSetting<Boolean>(application, USE_GOOGLE_SHEET)!!
+        return if (useGoogleSheet) googleSheetsRepository else roomRepository
     }
+
 }

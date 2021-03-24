@@ -7,13 +7,12 @@
 
         <variable
             name="viewModel"
-            type="bogomolov.aa.wordstrainer.viewmodel.GoogleSheetsViewModel" />
+            type="bogomolov.aa.wordstrainer.features.google_sheets.GoogleSheetsViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".view.fragments.GoogleSheetsFragment">
+        android:layout_height="match_parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"

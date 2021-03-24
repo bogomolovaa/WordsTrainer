@@ -1,8 +1,7 @@
-package bogomolov.aa.wordstrainer.view.fragments
+package bogomolov.aa.wordstrainer.features.settings
 
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.getIntent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,8 +18,8 @@ import bogomolov.aa.wordstrainer.R
 import bogomolov.aa.wordstrainer.android.*
 import bogomolov.aa.wordstrainer.dagger.ViewModelFactory
 import bogomolov.aa.wordstrainer.databinding.FragmentSettingsBinding
-import bogomolov.aa.wordstrainer.view.MainActivity
-import bogomolov.aa.wordstrainer.viewmodel.SettingsViewModel
+import bogomolov.aa.wordstrainer.features.main.MainActivity
+import bogomolov.aa.wordstrainer.view.fragments.SelectFirstLangDialogFragment
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 

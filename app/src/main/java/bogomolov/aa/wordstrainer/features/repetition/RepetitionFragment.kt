@@ -1,4 +1,4 @@
-package bogomolov.aa.wordstrainer.view.fragments
+package bogomolov.aa.wordstrainer.features.repetition
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -6,7 +6,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import androidx.fragment.app.Fragment
@@ -14,19 +13,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.onNavDestinationSelected
 
 import bogomolov.aa.wordstrainer.R
 import bogomolov.aa.wordstrainer.dagger.ViewModelFactory
 import bogomolov.aa.wordstrainer.databinding.FragmentRepetitionBinding
-import bogomolov.aa.wordstrainer.databinding.FragmentTranslationBinding
-import bogomolov.aa.wordstrainer.viewmodel.RepetitionViewModel
-import bogomolov.aa.wordstrainer.viewmodel.TranslationViewModel
+import bogomolov.aa.wordstrainer.features.translation.getTranslation
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 

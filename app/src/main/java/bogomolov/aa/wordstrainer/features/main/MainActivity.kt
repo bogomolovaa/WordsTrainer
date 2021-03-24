@@ -1,15 +1,11 @@
-package bogomolov.aa.wordstrainer.view
+package bogomolov.aa.wordstrainer.features.main
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavOptions
-import androidx.navigation.Navigation
 import bogomolov.aa.wordstrainer.R
 import bogomolov.aa.wordstrainer.android.TRANSLATION_DIRECTION
 import bogomolov.aa.wordstrainer.android.USE_GOOGLE_SHEET
@@ -27,12 +23,10 @@ import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 
+private const val REQUEST_SIGN_IN = 1
 
 class MainActivity : AppCompatActivity(), HasAndroidInjector {
     @Inject
@@ -50,10 +44,8 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
             DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 
         val useGoogleSheet = getSetting<Boolean>(this, USE_GOOGLE_SHEET)!!
-        if (useGoogleSheet && !googleSheetsRepository.hasCredential())
-            requestSignIn(this)
+        if (useGoogleSheet && !googleSheetsRepository.hasCredential()) requestSignIn(this)
         initTranslateDirection()
-
     }
 
     private fun initTranslateDirection() {
@@ -69,7 +61,6 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
             setSetting(this, TRANSLATION_DIRECTION, direction)
         }
     }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -94,7 +85,7 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
         }
     }
 
-    fun requestSignIn(context: Context) {
+    private fun requestSignIn(context: Context) {
         val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestScopes(Scope(SheetsScopes.SPREADSHEETS))
             .requestScopes(Scope(SheetsScopes.DRIVE))
@@ -102,9 +93,5 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
             .build()
         val client = GoogleSignIn.getClient(context, signInOptions)
         startActivityForResult(client.signInIntent, REQUEST_SIGN_IN)
-    }
-
-    companion object {
-        private const val REQUEST_SIGN_IN = 1
     }
 }

@@ -7,13 +7,12 @@
 
         <variable
             name="viewModel"
-            type="bogomolov.aa.wordstrainer.viewmodel.TranslationViewModel" />
+            type="bogomolov.aa.wordstrainer.features.translation.TranslationViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".view.fragments.TranslationFragment">
+        android:layout_height="match_parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"

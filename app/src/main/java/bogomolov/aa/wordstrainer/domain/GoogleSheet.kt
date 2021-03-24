@@ -1,4 +1,4 @@
-package bogomolov.aa.wordstrainer.model
+package bogomolov.aa.wordstrainer.domain
 
 data class GoogleSheet(
     val name: String,

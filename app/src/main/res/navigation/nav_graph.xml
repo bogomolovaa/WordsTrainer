@@ -5,18 +5,18 @@
 
     <fragment
         android:id="@+id/translationFragment"
-        android:name="bogomolov.aa.wordstrainer.view.fragments.TranslationFragment">
+        android:name="bogomolov.aa.wordstrainer.features.translation.TranslationFragment">
         <action
             android:id="@+id/action_translationFragment_to_repetitionFragment"
             app:destination="@id/repetitionFragment" />
     </fragment>
     <fragment
         android:id="@+id/repetitionFragment"
-        android:name="bogomolov.aa.wordstrainer.view.fragments.RepetitionFragment"
+        android:name="bogomolov.aa.wordstrainer.features.repetition.RepetitionFragment"
         android:label="@string/repetition" />
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="bogomolov.aa.wordstrainer.view.fragments.SettingsFragment"
+        android:name="bogomolov.aa.wordstrainer.features.settings.SettingsFragment"
         android:label="@string/settings">
         <action
             android:id="@+id/action_settingsFragment_to_googleSheetsFragment"
@@ -24,6 +24,6 @@
     </fragment>
     <fragment
         android:id="@+id/googleSheetsFragment"
-        android:name="bogomolov.aa.wordstrainer.view.fragments.GoogleSheetsFragment"
+        android:name="bogomolov.aa.wordstrainer.features.google_sheets.GoogleSheetsFragment"
         android:label="@string/select_sheet" />
 </navigation>

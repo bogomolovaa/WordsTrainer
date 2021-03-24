@@ -12,7 +12,6 @@ import javax.inject.Singleton
 @Component(modules = [AndroidInjectionModule::class, ViewModelsModule::class, InjectionsModule::class, MainModule::class])
 interface AppComponent: AndroidInjector<WordsTrainerApplication> {
 
-
     @Component.Builder
     interface Builder {
         @BindsInstance
@@ -22,6 +21,4 @@ interface AppComponent: AndroidInjector<WordsTrainerApplication> {
     }
 
     override fun inject(application: WordsTrainerApplication)
-
-
 }

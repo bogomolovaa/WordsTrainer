@@ -11,7 +11,9 @@ import okhttp3.Request
 import java.io.IOException
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class YandexTranslateProvider @Inject constructor(private val context: Context) {
     private val client = OkHttpClient()
 

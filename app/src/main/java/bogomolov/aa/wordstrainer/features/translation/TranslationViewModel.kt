@@ -1,4 +1,4 @@
-package bogomolov.aa.wordstrainer.viewmodel
+package bogomolov.aa.wordstrainer.features.translation
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData

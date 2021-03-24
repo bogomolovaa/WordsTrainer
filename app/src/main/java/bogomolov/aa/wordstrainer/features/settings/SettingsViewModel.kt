@@ -1,4 +1,4 @@
-package bogomolov.aa.wordstrainer.viewmodel
+package bogomolov.aa.wordstrainer.features.settings
 
 import android.content.Context
 import android.util.Log

@@ -1,15 +1,12 @@
 package bogomolov.aa.wordstrainer.repository
 
 import android.content.Context
-import android.util.Log
 import bogomolov.aa.wordstrainer.android.TRANSLATION_DIRECTION
 import bogomolov.aa.wordstrainer.android.getSetting
-import bogomolov.aa.wordstrainer.model.WordsRanger
+import bogomolov.aa.wordstrainer.domain.WordsRanger
 import bogomolov.aa.wordstrainer.repository.entity.Word
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-
-const val MAX_RANK = 10
 
 abstract class Repository(
     private val context: Context,

@@ -1,16 +1,14 @@
-package bogomolov.aa.wordstrainer.viewmodel
+package bogomolov.aa.wordstrainer.features.google_sheets
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import bogomolov.aa.wordstrainer.android.GOOGLE_SHEET_ID
 import bogomolov.aa.wordstrainer.android.GOOGLE_SHEET_NAME
 import bogomolov.aa.wordstrainer.android.USE_GOOGLE_SHEET
 import bogomolov.aa.wordstrainer.android.setSetting
-import bogomolov.aa.wordstrainer.model.GoogleSheet
+import bogomolov.aa.wordstrainer.domain.GoogleSheet
 import bogomolov.aa.wordstrainer.repository.GoogleSheetsRepository
-import bogomolov.aa.wordstrainer.repository.RoomRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject

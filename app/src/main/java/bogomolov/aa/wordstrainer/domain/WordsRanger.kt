@@ -1,7 +1,5 @@
-package bogomolov.aa.wordstrainer.model
+package bogomolov.aa.wordstrainer.domain
 
-import android.util.Log
-import bogomolov.aa.wordstrainer.repository.MAX_RANK
 import bogomolov.aa.wordstrainer.repository.entity.Word
 import com.google.common.primitives.Ints.max
 import java.util.*

@@ -1,4 +1,4 @@
-package bogomolov.aa.wordstrainer.view.fragments
+package bogomolov.aa.wordstrainer.features.google_sheets
 
 import android.content.Context
 import android.os.Bundle

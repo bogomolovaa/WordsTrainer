@@ -1,10 +1,9 @@
-package bogomolov.aa.wordstrainer.viewmodel
+package bogomolov.aa.wordstrainer.features.repetition
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bogomolov.aa.wordstrainer.repository.Repository
-import bogomolov.aa.wordstrainer.repository.RoomRepository
 import bogomolov.aa.wordstrainer.repository.entity.Word
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

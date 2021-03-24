@@ -13,8 +13,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class RoomRepository
-@Inject constructor(
+class RoomRepository @Inject constructor(
     private val context: Context,
     private val db: AppDatabase,
     translateProvider: YandexTranslateProvider

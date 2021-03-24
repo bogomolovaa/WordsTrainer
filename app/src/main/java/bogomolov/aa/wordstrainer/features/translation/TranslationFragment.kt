@@ -1,4 +1,4 @@
-package bogomolov.aa.wordstrainer.view.fragments
+package bogomolov.aa.wordstrainer.features.translation
 
 import android.app.Activity
 import android.content.Context
@@ -7,28 +7,22 @@ import android.os.Bundle
 import android.text.Html
 import android.text.SpannableString
 import android.text.Spanned
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.onNavDestinationSelected
 import bogomolov.aa.wordstrainer.R
-import bogomolov.aa.wordstrainer.android.USE_GOOGLE_SHEET
-import bogomolov.aa.wordstrainer.android.getSetting
 import bogomolov.aa.wordstrainer.dagger.ViewModelFactory
 import bogomolov.aa.wordstrainer.databinding.FragmentTranslationBinding
 import bogomolov.aa.wordstrainer.repository.entity.Word
 import bogomolov.aa.wordstrainer.repository.json.fromJson
-import bogomolov.aa.wordstrainer.viewmodel.TranslationViewModel
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 

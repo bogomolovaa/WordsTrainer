@@ -7,13 +7,12 @@
 
         <variable
             name="viewModel"
-            type="bogomolov.aa.wordstrainer.viewmodel.RepetitionViewModel" />
+            type="bogomolov.aa.wordstrainer.features.repetition.RepetitionViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".view.fragments.RepetitionFragment">
+        android:layout_height="match_parent">
 
 
 

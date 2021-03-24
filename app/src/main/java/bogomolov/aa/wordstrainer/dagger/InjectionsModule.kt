@@ -1,10 +1,10 @@
 package bogomolov.aa.wordstrainer.dagger
 
-import bogomolov.aa.wordstrainer.view.MainActivity
-import bogomolov.aa.wordstrainer.view.fragments.GoogleSheetsFragment
-import bogomolov.aa.wordstrainer.view.fragments.RepetitionFragment
-import bogomolov.aa.wordstrainer.view.fragments.SettingsFragment
-import bogomolov.aa.wordstrainer.view.fragments.TranslationFragment
+import bogomolov.aa.wordstrainer.features.google_sheets.GoogleSheetsFragment
+import bogomolov.aa.wordstrainer.features.main.MainActivity
+import bogomolov.aa.wordstrainer.features.repetition.RepetitionFragment
+import bogomolov.aa.wordstrainer.features.settings.SettingsFragment
+import bogomolov.aa.wordstrainer.features.translation.TranslationFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -25,5 +25,4 @@ abstract class InjectionsModule {
 
     @ContributesAndroidInjector
     abstract fun bindSettingsFragment(): SettingsFragment
-
 }

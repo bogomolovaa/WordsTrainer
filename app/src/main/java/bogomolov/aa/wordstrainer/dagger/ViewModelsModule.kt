@@ -2,10 +2,10 @@ package bogomolov.aa.wordstrainer.dagger
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import bogomolov.aa.wordstrainer.viewmodel.GoogleSheetsViewModel
-import bogomolov.aa.wordstrainer.viewmodel.RepetitionViewModel
-import bogomolov.aa.wordstrainer.viewmodel.SettingsViewModel
-import bogomolov.aa.wordstrainer.viewmodel.TranslationViewModel
+import bogomolov.aa.wordstrainer.features.google_sheets.GoogleSheetsViewModel
+import bogomolov.aa.wordstrainer.features.repetition.RepetitionViewModel
+import bogomolov.aa.wordstrainer.features.settings.SettingsViewModel
+import bogomolov.aa.wordstrainer.features.translation.TranslationViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -35,5 +35,4 @@ abstract class ViewModelsModule {
 
     @Binds
     abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
-
 }

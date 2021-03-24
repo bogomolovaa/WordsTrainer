@@ -1,10 +1,12 @@
-package bogomolov.aa.wordstrainer.view
+package bogomolov.aa.wordstrainer.features.google_sheets
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import bogomolov.aa.wordstrainer.databinding.SheetLayoutBinding
-import bogomolov.aa.wordstrainer.model.GoogleSheet
+import bogomolov.aa.wordstrainer.domain.GoogleSheet
+import bogomolov.aa.wordstrainer.view.AdapterHelper
+import bogomolov.aa.wordstrainer.view.AdapterSelectable
 
 class GoogleSheetsAdapter(private val helper: AdapterHelper<GoogleSheet, SheetLayoutBinding> = AdapterHelper()) :
     RecyclerView.Adapter<AdapterHelper<GoogleSheet, SheetLayoutBinding>.VH>(),

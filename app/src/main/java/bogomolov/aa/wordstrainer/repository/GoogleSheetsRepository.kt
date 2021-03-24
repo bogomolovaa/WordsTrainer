@@ -5,7 +5,7 @@ import android.widget.Toast
 import bogomolov.aa.wordstrainer.R
 import bogomolov.aa.wordstrainer.android.GOOGLE_SHEET_ID
 import bogomolov.aa.wordstrainer.android.getSetting
-import bogomolov.aa.wordstrainer.model.GoogleSheet
+import bogomolov.aa.wordstrainer.domain.GoogleSheet
 import bogomolov.aa.wordstrainer.repository.entity.Word
 import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
@@ -23,8 +23,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-class GoogleSheetsRepository
-@Inject constructor(
+class GoogleSheetsRepository @Inject constructor(
     val context: Context,
     translateProvider: YandexTranslateProvider
 ) : Repository(context, translateProvider) {

@@ -6,7 +6,6 @@ import androidx.room.Room
 import bogomolov.aa.wordstrainer.android.USE_GOOGLE_SHEET
 import bogomolov.aa.wordstrainer.android.getSetting
 import bogomolov.aa.wordstrainer.repository.*
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

@@ -11,25 +11,35 @@ import javax.inject.Inject
 
 class RepetitionViewModel
 @Inject constructor(private val repository: Repository) : ViewModel() {
-    var lastWord: Word? = null
-    var counterLiveData = MutableLiveData<Int>().apply { value = 0 }
+    var counterLiveData = MutableLiveData(0)
+    var nextWordLiveData = MutableLiveData<Word>()
 
-    fun nextWord(): Word? {
-        lastWord = repository.nextWord()
-        return lastWord
+    init {
+        nextWord()
     }
 
     fun right() {
-        val word = lastWord
-        counterLiveData.value = counterLiveData.value!! + 1
-        if (word != null)
-            viewModelScope.launch(Dispatchers.IO) { repository.updateRank(word, 1) }
+        updateRank(1)
+        nextWord()
     }
 
     fun wrong() {
-        val word = lastWord
+        updateRank(-1)
+        nextWord()
+    }
+
+    private fun nextWord() {
+        viewModelScope.launch(Dispatchers.IO) {
+            nextWordLiveData.postValue(repository.nextWord())
+        }
+    }
+
+    private fun updateRank(delta: Int) {
         counterLiveData.value = counterLiveData.value!! + 1
+        val word = nextWordLiveData.value
         if (word != null)
-            viewModelScope.launch(Dispatchers.IO) { repository.updateRank(word, -1) }
+            viewModelScope.launch(Dispatchers.IO) {
+                repository.updateRank(word, delta)
+            }
     }
 }

@@ -5,7 +5,5 @@ class Def {
     var text: String? = null
     var ts: String? = null
     var tr: List<Tr>? = null
-    override fun toString(): String {
-        return "text: " + text + ", pos: " + pos + ", tr: " + tr.toString()
-    }
+    override fun toString() = "text: $text, pos: $pos, tr: $tr"
 }

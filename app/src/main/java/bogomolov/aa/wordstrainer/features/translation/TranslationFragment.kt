@@ -41,7 +41,7 @@ class TranslationFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_translation,
@@ -53,26 +53,19 @@ class TranslationFragment : Fragment() {
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
         (activity as AppCompatActivity).title = resources.getString(R.string.translation)
         setHasOptionsMenu(true)
-
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         NavigationUI.setupWithNavController(binding.toolbar, navController)
 
         binding.textInputLayout.setEndIconOnClickListener { translate() }
-        viewModel.translationLiveData.observe(viewLifecycleOwner) {
-            if (it != null) {
-                binding.translationText.text = getTranslation(it)
-            } else {
-                binding.translationText.text = resources.getString(R.string.not_translated)
-            }
-
+        viewModel.translationLiveData.observe(viewLifecycleOwner) { word ->
+            binding.translationText.text =
+                getTranslationText(word) ?: resources.getString(R.string.not_translated)
         }
-
-        binding.wordInput.setOnEditorActionListener { v, actionId, event ->
+        binding.wordInput.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_GO) {
                 translate()
                 true
             } else false
-
         }
 
         return binding.root
@@ -81,6 +74,10 @@ class TranslationFragment : Fragment() {
     private fun translate() {
         val text = binding.wordInput.text
         if (text != null) viewModel.translate(text.toString())
+        hideKeyboard()
+    }
+
+    private fun hideKeyboard() {
         val imm =
             requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(requireView().windowToken, 0)
@@ -96,11 +93,10 @@ class TranslationFragment : Fragment() {
         if (item.itemId == R.id.settingsFragmentAction) navController.navigate(R.id.settingsFragment)
         return true
     }
-
-
 }
 
-fun getTranslation(word: Word): Spanned {
+fun getTranslationText(word: Word?): Spanned? {
+    if (word == null) return null
     return if (word.json.startsWith("{\"head\"")) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             Html.fromHtml(
@@ -115,27 +111,23 @@ fun getTranslation(word: Word): Spanned {
     }
 }
 
-
-private fun translationToHtml(word: Word): String? {
+private fun translationToHtml(word: Word): String {
     val sb = StringBuilder()
     if (word.json.startsWith("{\"head\"")) {
         val translation = fromJson(word.json)
         if (translation?.def != null)
             for (def in translation.def!!.iterator()) {
-                //Log.i("test","def.ts ${def.ts}")
                 sb.append("<p>\t")
                 sb.append("<font color='#00A'><i>${def.ts}</i></font>\t")
                 sb.append("<p>\t")
-                sb.append("<strong>" + def.text.toString() + "</strong> <font color='#070'><i>" + def.pos.toString() + "</i></font>")
+                sb.append("<strong>${def.text}</strong> <font color='#070'><i>${def.pos}</i></font>")
                 var counter = 1
                 for (tr in def.tr!!) {
-                    val syns = if (tr.syn != null) tr.syn.toString() else ""
-                    sb.append(
-                        "<p>\t\t\t" + counter++ + " " + tr.text + (if (syns.length > 0) ", " + syns.substring(
-                            1,
-                            syns.length - 1
-                        ) else "") + "</p>"
-                    )
+                    sb.append("<p>\t\t\t${counter++} ${tr.text}")
+                    val synonyms = tr.syn?.toString() ?: ""
+                    if (synonyms.isNotEmpty())
+                        sb.append(", " + synonyms.substring(1, synonyms.length - 1))
+                    sb.append("</p>")
                 }
                 sb.append("</p>")
             }
@@ -143,8 +135,10 @@ private fun translationToHtml(word: Word): String? {
         sb.append(
             word.json.replace("{\n", "{<br>")
                 .replace("\n}", "<br>}")
-                .replace("\n ", "<br>&nbsp;").replace("\n", "<p>").replace(" ", "&nbsp;")
-        );
+                .replace("\n ", "<br>&nbsp;")
+                .replace("\n", "<p>")
+                .replace(" ", "&nbsp;")
+        )
     }
     return sb.toString()
 }

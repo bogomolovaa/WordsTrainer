@@ -8,20 +8,20 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.*
 import android.view.animation.AccelerateInterpolator
-import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
-
 import bogomolov.aa.wordstrainer.R
 import bogomolov.aa.wordstrainer.dagger.ViewModelFactory
 import bogomolov.aa.wordstrainer.databinding.FragmentRepetitionBinding
-import bogomolov.aa.wordstrainer.features.translation.getTranslation
+import bogomolov.aa.wordstrainer.features.translation.getTranslationText
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -42,7 +42,7 @@ class RepetitionFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_repetition,
@@ -53,55 +53,52 @@ class RepetitionFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
         setHasOptionsMenu(true)
-
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         NavigationUI.setupWithNavController(binding.toolbar, navController)
 
-        binding.cardView.setOnClickListener {
-            showTranslation()
-        }
-
-        binding.leftArrow.setOnClickListener {
-            doWrong()
-        }
-
-        binding.rightArrow.setOnClickListener {
-            doRight()
-        }
-
-        val detector =
-            GestureDetectorCompat(activity, object : GestureDetector.SimpleOnGestureListener() {
-                override fun onDown(event: MotionEvent): Boolean {
-                    return true
-                }
-
-                override fun onScroll(
-                    e1: MotionEvent?,
-                    e2: MotionEvent?,
-                    distanceX: Float,
-                    distanceY: Float
-                ): Boolean {
-
-                    if (!swipeBlocked) {
-                        if (distanceX < -20) doRight()
-                        if (distanceX > 20) doWrong()
-                    }
-
-                    return true
-                }
-
-            })
-
-        binding.cardView.setOnTouchListener { v, event ->
-            if (event != null) detector.onTouchEvent(event)
+        binding.cardView.setOnClickListener { showTranslation() }
+        binding.leftArrow.setOnClickListener { doWrong() }
+        binding.rightArrow.setOnClickListener { doRight() }
+        val gestureDetector = createGestureDetector()
+        binding.cardView.setOnTouchListener { _, event ->
+            if (event != null) gestureDetector.onTouchEvent(event)
             false
         }
 
         setColor(R.color.neutral)
-        showNextWord()
+
+        viewModel.nextWordLiveData.observe(viewLifecycleOwner) { word ->
+            binding.translationText.text = ""
+            if (word != null) {
+                binding.wordText.text = word.word
+                binding.wordMainText.text = word.word
+            } else {
+                binding.wordText.text = ""
+                binding.wordMainText.text = ""
+            }
+        }
 
         return binding.root
     }
+
+    private fun createGestureDetector() =
+        GestureDetectorCompat(requireContext(), object : GestureDetector.SimpleOnGestureListener() {
+
+            override fun onDown(event: MotionEvent) = true
+
+            override fun onScroll(
+                e1: MotionEvent?,
+                e2: MotionEvent?,
+                distanceX: Float,
+                distanceY: Float
+            ): Boolean {
+                if (!swipeBlocked) {
+                    if (distanceX < -20) doRight()
+                    if (distanceX > 20) doWrong()
+                }
+                return true
+            }
+        })
 
     private fun getScreenWidth(): Int {
         val displayMetrics = DisplayMetrics()
@@ -118,7 +115,6 @@ class RepetitionFragment : Fragment() {
                     setColor(R.color.neutral)
                     binding.cardView.translationX = 0f
                     viewModel.right()
-                    showNextWord()
                     swipeBlocked = false
                 }
             }).setInterpolator(AccelerateInterpolator()).start()
@@ -133,36 +129,18 @@ class RepetitionFragment : Fragment() {
                     setColor(R.color.neutral)
                     binding.cardView.translationX = 0f
                     viewModel.wrong()
-                    showNextWord()
                     swipeBlocked = false
                 }
             }).setInterpolator(AccelerateInterpolator()).start()
     }
 
     private fun setColor(color: Int) {
-        binding.cardView.setBackgroundColor(
-            ContextCompat.getColor(
-                requireContext(),
-                color
-            )
-        )
-    }
-
-    private fun showNextWord() {
-        binding.translationText.text = ""
-        val word = viewModel.nextWord()
-        if (word != null) {
-            binding.wordText.text = word.word
-            binding.wordMainText.text = word.word
-        }else{
-            binding.wordText.text = ""
-            binding.wordMainText.text = ""
-        }
+        binding.cardView.setBackgroundColor(ContextCompat.getColor(requireContext(), color))
     }
 
     private fun showTranslation() {
-        val word = viewModel.lastWord
-        if (word != null) binding.translationText.text = getTranslation(word)
+        val word = viewModel.nextWordLiveData.value
+        binding.translationText.text = getTranslationText(word) ?: ""
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -174,7 +152,5 @@ class RepetitionFragment : Fragment() {
         if (item.itemId == R.id.translationFragmentAction) navController.navigate(R.id.translationFragment)
         if (item.itemId == R.id.settingsFragmentAction) navController.navigate(R.id.settingsFragment)
         return true
-        //return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
-
 }

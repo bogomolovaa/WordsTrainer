@@ -40,9 +40,7 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-        val binding =
-            DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
-
+        DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
         val useGoogleSheet = getSetting<Boolean>(this, USE_GOOGLE_SHEET)!!
         if (useGoogleSheet && !googleSheetsRepository.hasCredential()) requestSignIn(this)
         initTranslateDirection()
@@ -64,24 +62,21 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val set = data?.extras
-        if (requestCode == REQUEST_SIGN_IN) {
-            if (resultCode == RESULT_OK) {
-                GoogleSignIn.getSignedInAccountFromIntent(data)
-                    .addOnSuccessListener { account ->
-                        val scopes = listOf(SheetsScopes.SPREADSHEETS, DriveScopes.DRIVE)
-                        val credential = GoogleAccountCredential.usingOAuth2(this, scopes)
-                        credential.selectedAccount = account.account
-                        setSetting(this, USE_GOOGLE_SHEET, true)
-                        googleSheetsRepository.setCredential(credential)
-                    }.addOnFailureListener { e ->
-                        Toast.makeText(
-                            this,
-                            resources.getString(R.string.sign_in_failed),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-            }
+        if (requestCode == REQUEST_SIGN_IN && resultCode == RESULT_OK) {
+            GoogleSignIn.getSignedInAccountFromIntent(data)
+                .addOnSuccessListener { account ->
+                    val scopes = listOf(SheetsScopes.SPREADSHEETS, DriveScopes.DRIVE)
+                    val credential = GoogleAccountCredential.usingOAuth2(this, scopes)
+                    credential.selectedAccount = account.account
+                    setSetting(this, USE_GOOGLE_SHEET, true)
+                    googleSheetsRepository.setCredential(credential)
+                }.addOnFailureListener { e ->
+                    Toast.makeText(
+                        this,
+                        resources.getString(R.string.sign_in_failed),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
         }
     }
 

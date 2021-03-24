@@ -1,8 +1,6 @@
 package bogomolov.aa.wordstrainer.repository
 
 import android.content.Context
-import android.util.Log
-import androidx.lifecycle.viewModelScope
 import bogomolov.aa.wordstrainer.android.TRANSLATION_DIRECTION
 import bogomolov.aa.wordstrainer.android.getSetting
 import bogomolov.aa.wordstrainer.repository.entity.Word
@@ -34,8 +32,8 @@ class RoomRepository @Inject constructor(
     }
 
     override fun loadAllWords(): List<Word> {
-        val direction = getSetting<String>(context, TRANSLATION_DIRECTION)
-        return db.wordsDao().loadAll(direction!!)
+        val direction = getSetting<String>(context, TRANSLATION_DIRECTION)?:""
+        return db.wordsDao().loadAll(direction)
     }
 
     fun import(words: List<Word>) {
@@ -44,5 +42,4 @@ class RoomRepository @Inject constructor(
         db.wordsDao().addWords(words.map { it.copy(id = 0, direction = direction) })
         initWords()
     }
-
 }

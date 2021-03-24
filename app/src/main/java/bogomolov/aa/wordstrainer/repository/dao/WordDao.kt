@@ -1,6 +1,9 @@
 package bogomolov.aa.wordstrainer.repository.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import bogomolov.aa.wordstrainer.repository.entity.Word
 
 @Dao

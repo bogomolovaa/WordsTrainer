@@ -1,41 +1,24 @@
 package bogomolov.aa.wordstrainer.features.google_sheets
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import bogomolov.aa.wordstrainer.databinding.SheetLayoutBinding
 import bogomolov.aa.wordstrainer.domain.GoogleSheet
-import bogomolov.aa.wordstrainer.view.AdapterHelper
-import bogomolov.aa.wordstrainer.view.AdapterSelectable
 
-class GoogleSheetsAdapter(private val helper: AdapterHelper<GoogleSheet, SheetLayoutBinding> = AdapterHelper()) :
-    RecyclerView.Adapter<AdapterHelper<GoogleSheet, SheetLayoutBinding>.VH>(),
-    AdapterSelectable<GoogleSheet, SheetLayoutBinding> {
+class GoogleSheetsAdapter(private val onClick: (GoogleSheet) -> Unit) :
+    RecyclerView.Adapter<GoogleSheetsAdapter.VH>() {
     private val sheets = ArrayList<GoogleSheet>()
 
-    init {
-        helper.adapter = this
-    }
-
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): AdapterHelper<GoogleSheet, SheetLayoutBinding>.VH {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val binding =
             SheetLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        val cv = binding.cardView
-        return helper.VH(cv, cv, binding)
+        return VH(binding.root, binding)
     }
 
-    override fun onBindViewHolder(
-        holder: AdapterHelper<GoogleSheet, SheetLayoutBinding>.VH,
-        position: Int
-    ) = helper.onBindViewHolder(holder, position)
-
-    override fun getItem(position: Int) = sheets[position]
-
-    override fun bind(item: GoogleSheet?, binding: SheetLayoutBinding) {
-        binding.sheetName.text = item?.name ?: ""
+    override fun onBindViewHolder(holder: VH, position: Int) {
+        holder.bind(sheets[position])
     }
 
     override fun getItemCount() = sheets.size
@@ -46,6 +29,21 @@ class GoogleSheetsAdapter(private val helper: AdapterHelper<GoogleSheet, SheetLa
         notifyDataSetChanged()
     }
 
-    override fun getId(item: GoogleSheet): Long = 0
+    inner class VH(viewHolder: View, private val binding: SheetLayoutBinding) :
+        RecyclerView.ViewHolder(viewHolder), View.OnClickListener {
 
+        init {
+            viewHolder.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View) {
+            if (adapterPosition == RecyclerView.NO_POSITION) return
+            val item = sheets[adapterPosition]
+            onClick.invoke(item)
+        }
+
+        fun bind(item: GoogleSheet?){
+            binding.sheetName.text = item?.name ?: ""
+        }
+    }
 }

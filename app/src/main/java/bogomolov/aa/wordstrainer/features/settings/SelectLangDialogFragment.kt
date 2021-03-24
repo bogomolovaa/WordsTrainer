@@ -6,9 +6,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import bogomolov.aa.wordstrainer.R
-import bogomolov.aa.wordstrainer.android.GOOGLE_SHEET_NAME
-import bogomolov.aa.wordstrainer.android.TRANSLATION_DIRECTION
-import bogomolov.aa.wordstrainer.android.setSetting
 
 class SelectFirstLangDialogFragment(
     private val activity: AppCompatActivity,
@@ -52,5 +49,3 @@ class SelectSecondLangDialogFragment(
         return builder.create()
     }
 }
-
-

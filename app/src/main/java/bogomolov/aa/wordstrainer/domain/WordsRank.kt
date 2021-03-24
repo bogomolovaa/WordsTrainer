@@ -5,7 +5,7 @@ import com.google.common.primitives.Ints.max
 import java.util.*
 import kotlin.math.min
 
-class WordsRanger(words: List<Word>) {
+class WordsRank(words: List<Word>) {
     private val rankMap = HashMap<Int, RankList>()
     private var minRank = 0
     private var maxRank = 0
@@ -19,8 +19,7 @@ class WordsRanger(words: List<Word>) {
     }
 
     fun addWord(word: Word) {
-        val rankList = rankMap[word.rank] ?: RankList(word.rank)
-            .also { rankMap[word.rank] = it }
+        val rankList = rankMap[word.rank] ?: RankList(word.rank).also { rankMap[word.rank] = it }
         rankList.words += word
         minRank = min(word.rank, minRank)
         maxRank = max(word.rank, maxRank)

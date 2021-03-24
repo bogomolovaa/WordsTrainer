@@ -27,8 +27,7 @@
     <string name="no_connection">No Network connection</string>
     <string name="connection_timeout">Connection timeout</string>
     <string name="sign_in_failed">Google Sign In failed</string>
-
-
+    <string name="privacy_link">http://bogomolovaa.github.io/WordsTrainer/</string>
 
     <string name="en_lang">English</string>
     <string name="de_lang">Deutsch</string>

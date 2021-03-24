@@ -23,7 +23,6 @@ import bogomolov.aa.wordstrainer.view.fragments.SelectFirstLangDialogFragment
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
-
 class SettingsFragment() : Fragment() {
     @Inject
     internal lateinit var viewModelFactory: ViewModelFactory
@@ -37,7 +36,7 @@ class SettingsFragment() : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val binding: FragmentSettingsBinding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_settings,
@@ -47,7 +46,6 @@ class SettingsFragment() : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
         val mainActivity = requireActivity() as MainActivity
         mainActivity.setSupportActionBar(binding.toolbar)
-
         val navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         NavigationUI.setupWithNavController(binding.toolbar, navController)
 
@@ -61,13 +59,11 @@ class SettingsFragment() : Fragment() {
 
         val activity = requireActivity() as AppCompatActivity
         binding.translationDirection.setOnClickListener {
-            SelectFirstLangDialogFragment(activity) {
-                binding.translationDirection.text = it
-                viewModel.setDirection(it)
-            }.show(
-                activity.supportFragmentManager,
-                "SelectFirstLangDialogFragment"
-            )
+            SelectFirstLangDialogFragment(activity) { direction->
+                binding.translationDirection.text = direction
+                setSetting(requireContext(), TRANSLATION_DIRECTION, direction)
+                viewModel.initWords()
+            }.show(activity.supportFragmentManager, "")
         }
 
         binding.googleSheetSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -81,35 +77,27 @@ class SettingsFragment() : Fragment() {
                 .createPendingIntent().send()
             requireActivity().overridePendingTransition(0, 0)
         }
-
         binding.googleSheetName.setOnClickListener {
             navController.navigate(R.id.googleSheetsFragment)
         }
-
         binding.importButton.setOnClickListener {
             binding.importButton.visibility = View.GONE
             binding.importedIcon.visibility = View.VISIBLE
             viewModel.importWords()
         }
-
-
         binding.exportButton.setOnClickListener {
             binding.exportButton.visibility = View.GONE
             binding.exportedIcon.visibility = View.VISIBLE
             viewModel.exportWords()
         }
-
         binding.privacyPolicy.setOnClickListener { openPrivacyPolicy() }
-
 
         return binding.root
     }
 
     private fun openPrivacyPolicy() {
         val i = Intent(Intent.ACTION_VIEW)
-        i.data = Uri.parse("http://bogomolovaa.github.io/WordsTrainer/")
+        i.data = Uri.parse(resources.getString(R.string.privacy_link))
         startActivity(i)
     }
-
-
 }

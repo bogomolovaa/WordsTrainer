@@ -3,20 +3,16 @@ package bogomolov.aa.wordstrainer.repository
 import android.content.Context
 import bogomolov.aa.wordstrainer.android.TRANSLATION_DIRECTION
 import bogomolov.aa.wordstrainer.android.getSetting
-import bogomolov.aa.wordstrainer.domain.WordsRanger
+import bogomolov.aa.wordstrainer.domain.WordsRank
 import bogomolov.aa.wordstrainer.repository.entity.Word
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 abstract class Repository(
     private val context: Context,
     private val translateProvider: YandexTranslateProvider
 ) {
-
     val words: MutableList<Word> = ArrayList()
     protected var wordsMap: MutableMap<String, Word> = HashMap()
-    private var wordsRanger: WordsRanger? = null
-
+    private var wordsRank: WordsRank? = null
 
     fun translate(text: String): Word? {
         var word = wordsMap[text]
@@ -27,7 +23,7 @@ abstract class Repository(
                 addWord(word)
                 words.add(word)
                 wordsMap[text] = word
-                wordsRanger?.addWord(word)
+                wordsRank?.addWord(word)
             }
         } else {
             word.rank -= 1
@@ -36,10 +32,10 @@ abstract class Repository(
         return word
     }
 
-    fun nextWord() = wordsRanger?.nextWord()
+    fun nextWord() = wordsRank?.nextWord()
 
     fun updateRank(word: Word, delta: Int) {
-        wordsRanger?.deleteWord(word)
+        wordsRank?.deleteWord(word)
         word.rank += delta
         update(word)
     }
@@ -57,7 +53,6 @@ abstract class Repository(
     }
 
     protected fun updateWordsRanger() {
-        wordsRanger = WordsRanger(words)
+        wordsRank = WordsRank(words)
     }
-
 }

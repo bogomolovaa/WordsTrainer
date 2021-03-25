@@ -5,23 +5,22 @@ import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.text.SpannableString
 import android.util.DisplayMetrics
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GestureDetectorCompat
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import bogomolov.aa.wordstrainer.R
 import bogomolov.aa.wordstrainer.dagger.ViewModelFactory
 import bogomolov.aa.wordstrainer.databinding.FragmentRepetitionBinding
-import bogomolov.aa.wordstrainer.features.translation.getTranslationText
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
@@ -38,22 +37,17 @@ class RepetitionFragment : Fragment() {
         super.onAttach(context)
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        binding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.fragment_repetition,
-            container,
-            false
-        )
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = viewLifecycleOwner
+    ) = FragmentRepetitionBinding.inflate(inflater, container, false).also { binding = it }.root
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
         setHasOptionsMenu(true)
-        navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
+        navController = findNavController()
         NavigationUI.setupWithNavController(binding.toolbar, navController)
 
         binding.cardView.setOnClickListener { showTranslation() }
@@ -77,8 +71,9 @@ class RepetitionFragment : Fragment() {
                 binding.wordMainText.text = ""
             }
         }
-
-        return binding.root
+        viewModel.counterLiveData.observe(viewLifecycleOwner) {
+            binding.counterText.text = it.toString()
+        }
     }
 
     private fun createGestureDetector() =
@@ -140,7 +135,8 @@ class RepetitionFragment : Fragment() {
 
     private fun showTranslation() {
         val word = viewModel.nextWordLiveData.value
-        binding.translationText.text = getTranslationText(word) ?: ""
+        binding.translationText.text =
+            if (word?.translation != null) SpannableString(word.translation) else ""
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

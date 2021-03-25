@@ -5,18 +5,17 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
-import android.text.SpannableString
 import android.text.Spanned
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import bogomolov.aa.wordstrainer.R
 import bogomolov.aa.wordstrainer.dagger.ViewModelFactory
@@ -41,19 +40,14 @@ class TranslationFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        binding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.fragment_translation,
-            container,
-            false
-        )
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = viewLifecycleOwner
+    ) = FragmentTranslationBinding.inflate(inflater, container, false).also { binding = it }.root
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
         (activity as AppCompatActivity).title = resources.getString(R.string.translation)
         setHasOptionsMenu(true)
-        navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
+        navController = findNavController()
         NavigationUI.setupWithNavController(binding.toolbar, navController)
 
         binding.textInputLayout.setEndIconOnClickListener { translate() }
@@ -67,8 +61,6 @@ class TranslationFragment : Fragment() {
                 true
             } else false
         }
-
-        return binding.root
     }
 
     private fun translate() {
@@ -96,29 +88,26 @@ class TranslationFragment : Fragment() {
 }
 
 fun getTranslationText(word: Word?): Spanned? {
-    if (word == null) return null
-    return if (word.json.startsWith("{\"head\"")) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            Html.fromHtml(
-                translationToHtml(word),
-                Html.FROM_HTML_MODE_LEGACY
-            )
-        } else {
-            Html.fromHtml(translationToHtml(word))
-        }
+    if (word?.json == null) return null
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        Html.fromHtml(
+            translationToHtml(word.json),
+            Html.FROM_HTML_MODE_LEGACY
+        )
     } else {
-        SpannableString(word.json)
+        Html.fromHtml(translationToHtml(word.json))
     }
 }
 
-private fun translationToHtml(word: Word): String {
+
+private fun translationToHtml(json: String): String {
     val sb = StringBuilder()
-    if (word.json.startsWith("{\"head\"")) {
-        val translation = fromJson(word.json)
+    if (json.startsWith("{\"head\"")) {
+        val translation = fromJson(json)
         if (translation?.def != null)
             for (def in translation.def!!.iterator()) {
                 sb.append("<p>\t")
-                sb.append("<font color='#00A'><i>${def.ts}</i></font>\t")
+                sb.append("<font color='#00A'><i>${def.ts ?: ""}</i></font>\t")
                 sb.append("<p>\t")
                 sb.append("<strong>${def.text}</strong> <font color='#070'><i>${def.pos}</i></font>")
                 var counter = 1
@@ -133,7 +122,7 @@ private fun translationToHtml(word: Word): String {
             }
     } else {
         sb.append(
-            word.json.replace("{\n", "{<br>")
+            json.replace("{\n", "{<br>")
                 .replace("\n}", "<br>}")
                 .replace("\n ", "<br>&nbsp;")
                 .replace("\n", "<p>")

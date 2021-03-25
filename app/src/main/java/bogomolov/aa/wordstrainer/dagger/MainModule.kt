@@ -25,7 +25,6 @@ class MainModule {
             DB_NAME
         ).fallbackToDestructiveMigration().build()
 
-    @Singleton
     @Provides
     fun providesRepository(
         application: Application,

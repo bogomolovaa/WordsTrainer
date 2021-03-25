@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
-import bogomolov.aa.wordstrainer.R
 import bogomolov.aa.wordstrainer.databinding.FragmentSheetNameBottomDialogBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -16,13 +14,7 @@ class SheetNameBottomDialogFragment(private val onSave: (String) -> Unit) :
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding: FragmentSheetNameBottomDialogBinding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.fragment_sheet_name_bottom_dialog,
-            container,
-            false
-        )
-        binding.lifecycleOwner = viewLifecycleOwner
+        val binding = FragmentSheetNameBottomDialogBinding.inflate(inflater, container, false)
         binding.saveButton.setOnClickListener {
             onSave(binding.enterText.text.toString())
             dismiss()

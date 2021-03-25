@@ -5,6 +5,7 @@
         <item>@string/en_lang</item>
         <item>@string/de_lang</item>
         <item>@string/fr_lang</item>
+        <item>@string/es_lang</item>
         <item>@string/ru_lang</item>
     </string-array>
 
@@ -12,6 +13,7 @@
         <item>en</item>
         <item>de</item>
         <item>fr</item>
+        <item>es</item>
         <item>ru</item>
     </string-array>
 </resources>

@@ -3,9 +3,9 @@ package bogomolov.aa.wordstrainer.features.main
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
 import bogomolov.aa.wordstrainer.R
 import bogomolov.aa.wordstrainer.android.TRANSLATION_DIRECTION
 import bogomolov.aa.wordstrainer.android.USE_GOOGLE_SHEET
@@ -40,8 +40,9 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-        DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
-        val useGoogleSheet = getSetting<Boolean>(this, USE_GOOGLE_SHEET)!!
+        val binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        val useGoogleSheet = getSetting<Boolean>(this, USE_GOOGLE_SHEET) ?: false
         if (useGoogleSheet && !googleSheetsRepository.hasCredential()) requestSignIn(this)
         initTranslateDirection()
     }

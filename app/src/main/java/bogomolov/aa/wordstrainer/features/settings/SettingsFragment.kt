@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavDeepLinkBuilder
@@ -27,6 +26,7 @@ class SettingsFragment() : Fragment() {
     @Inject
     internal lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: SettingsViewModel by viewModels { viewModelFactory }
+    private lateinit var binding: FragmentSettingsBinding
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -36,14 +36,10 @@ class SettingsFragment() : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        val binding: FragmentSettingsBinding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.fragment_settings,
-            container,
-            false
-        )
-        binding.lifecycleOwner = viewLifecycleOwner
+    ) = FragmentSettingsBinding.inflate(inflater, container, false).also { binding = it }.root
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val mainActivity = requireActivity() as MainActivity
         mainActivity.setSupportActionBar(binding.toolbar)
         val navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
@@ -59,7 +55,7 @@ class SettingsFragment() : Fragment() {
 
         val activity = requireActivity() as AppCompatActivity
         binding.translationDirection.setOnClickListener {
-            SelectFirstLangDialogFragment(activity) { direction->
+            SelectFirstLangDialogFragment(activity) { direction ->
                 binding.translationDirection.text = direction
                 setSetting(requireContext(), TRANSLATION_DIRECTION, direction)
                 viewModel.initWords()
@@ -91,8 +87,6 @@ class SettingsFragment() : Fragment() {
             viewModel.exportWords()
         }
         binding.privacyPolicy.setOnClickListener { openPrivacyPolicy() }
-
-        return binding.root
     }
 
     private fun openPrivacyPolicy() {

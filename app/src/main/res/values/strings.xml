@@ -30,8 +30,9 @@
     <string name="privacy_link">http://bogomolovaa.github.io/WordsTrainer/</string>
 
     <string name="en_lang">English</string>
-    <string name="de_lang">Deutsch</string>
+    <string name="de_lang">German</string>
     <string name="fr_lang">French</string>
     <string name="ru_lang">Russian</string>
+    <string name="es_lang">Spanish</string>
 
 </resources>

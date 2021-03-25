@@ -14,6 +14,8 @@ class SettingsViewModel
     private val googleSheetsRepository: GoogleSheetsRepository
 ) : ViewModel() {
 
+
+
     fun initWords() {
         viewModelScope.launch(Dispatchers.IO) {
             roomRepository.initWords()

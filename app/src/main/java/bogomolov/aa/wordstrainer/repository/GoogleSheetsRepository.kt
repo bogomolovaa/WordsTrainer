@@ -25,7 +25,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 private const val TYPE_GOOGLE_SHEETS = "application/vnd.google-apps.spreadsheet"
-private const val ROW_RANGE = "A1:F"
+private const val ROW_RANGE = "A1:D"
 
 @Singleton
 class GoogleSheetsRepository @Inject constructor(
@@ -98,19 +98,18 @@ class GoogleSheetsRepository @Inject constructor(
         kotlin.runCatching {
             service.spreadsheets().values().get(spreadsheetId, ROW_RANGE).execute().getValues()
         }.onSuccess { values ->
-            if (values != null) for (row in values) if (row.size >= 5) words += rowToWord(row)
+            if (values != null) for (row in values) if (row.size == 4) words += rowToWord(row)
         }.onFailure(showError)
         return words
     }
 
     private fun rowToWord(row: List<Any>): Word {
-        val rankString = row[3] as String
+        val rankString = row[2] as String
         return Word(
             word = row[0] as String,
-            translation = row[1] as String,
-            id = row[2].toString().toInt(),
+            id = row[1].toString().toInt(),
             rank = if (rankString.isNotEmpty()) rankString.toInt() else 0,
-            json = row[4] as String
+            translation = row[3] as String
         )
     }
 
@@ -118,7 +117,7 @@ class GoogleSheetsRepository @Inject constructor(
         ValueRange().apply {
             majorDimension = "ROWS"
             setValues(words.map { word ->
-                listOf(word.word, word.translation, word.id, word.rank, word.json)
+                listOf(word.word, word.id, word.rank, word.translation)
             })
         }
 
@@ -212,4 +211,4 @@ class GoogleSheetsRepository @Inject constructor(
     }
 }
 
-private fun getRankRange(word: Word) = "D${word.id}"
+private fun getRankRange(word: Word) = "C${word.id}"

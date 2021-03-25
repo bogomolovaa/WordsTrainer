@@ -10,9 +10,8 @@ data class Word(
     val word: String,
     val translation: String,
     var rank: Int = 0,
-    val json: String,
-    var direction: String? = null,
-    var deleted: Int = 0
+    val json: String? = null,
+    var direction: String? = null
 ) {
 
     override fun toString() = "$id $word $translation"

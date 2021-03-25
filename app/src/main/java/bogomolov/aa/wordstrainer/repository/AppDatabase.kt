@@ -7,7 +7,7 @@ import bogomolov.aa.wordstrainer.repository.entity.Word
 
 const val DB_NAME = "words_db"
 
-@Database(entities = [Word::class], version = 8)
+@Database(entities = [Word::class], version = 11)
 abstract class AppDatabase: RoomDatabase() {
 
     abstract fun wordsDao(): WordDao

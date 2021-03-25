@@ -5,13 +5,13 @@ import com.google.common.primitives.Ints.max
 import java.util.*
 import kotlin.math.min
 
-class WordsRank(words: List<Word>) {
+class WordsRank(private val words: List<Word>) {
     private val rankMap = HashMap<Int, RankList>()
     private var minRank = 0
     private var maxRank = 0
 
     init {
-        for (word in words.filter { it.deleted == 0 }) addWord(word)
+        initWords()
     }
 
     fun deleteWord(word: Word) {
@@ -39,7 +39,15 @@ class WordsRank(words: List<Word>) {
                 }
             }
         }
+        if(words.isNotEmpty()){
+            initWords()
+            return nextWord()
+        }
         return null
+    }
+
+    private fun initWords(){
+        for (word in words) addWord(word)
     }
 }
 

@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
     @Inject
     internal lateinit var googleSheetsRepository: GoogleSheetsRepository
 
-    override fun androidInjector(): AndroidInjector<Any> = androidInjector
+    override fun androidInjector() = androidInjector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)

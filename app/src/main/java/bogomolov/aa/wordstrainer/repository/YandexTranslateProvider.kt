@@ -27,7 +27,7 @@ class YandexTranslateProvider @Inject constructor(private val context: Context) 
                 )
             }
         } catch (e: Exception) {
-            Log.e("YandexTranslateProvider", "translate error", e)
+            Log.e("YandexTranslateProvider", "translate", e)
         }
         return null
     }

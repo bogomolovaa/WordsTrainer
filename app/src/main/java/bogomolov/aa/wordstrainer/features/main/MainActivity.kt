@@ -3,10 +3,10 @@ package bogomolov.aa.wordstrainer.features.main
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import bogomolov.aa.wordstrainer.R
+import bogomolov.aa.wordstrainer.WordsTrainerApplication
 import bogomolov.aa.wordstrainer.android.TRANSLATION_DIRECTION
 import bogomolov.aa.wordstrainer.android.USE_GOOGLE_SHEET
 import bogomolov.aa.wordstrainer.android.getSetting
@@ -19,26 +19,17 @@ import com.google.android.gms.common.api.Scope
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.services.drive.DriveScopes
 import com.google.api.services.sheets.v4.SheetsScopes
-import dagger.android.AndroidInjection
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
 import java.util.*
 import javax.inject.Inject
 
 private const val REQUEST_SIGN_IN = 1
 
-class MainActivity : AppCompatActivity(), HasAndroidInjector {
-    @Inject
-    internal lateinit var androidInjector: DispatchingAndroidInjector<Any>
-
+class MainActivity : AppCompatActivity() {
     @Inject
     internal lateinit var googleSheetsRepository: GoogleSheetsRepository
 
-    override fun androidInjector() = androidInjector
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
+        (application as WordsTrainerApplication).appComponent.inject(this)
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

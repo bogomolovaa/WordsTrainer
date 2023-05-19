@@ -11,13 +11,13 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
 import bogomolov.aa.wordstrainer.R
+import bogomolov.aa.wordstrainer.WordsTrainerApplication
 import bogomolov.aa.wordstrainer.android.GOOGLE_SHEET_ID
 import bogomolov.aa.wordstrainer.android.GOOGLE_SHEET_NAME
 import bogomolov.aa.wordstrainer.android.USE_GOOGLE_SHEET
 import bogomolov.aa.wordstrainer.android.setSetting
 import bogomolov.aa.wordstrainer.dagger.ViewModelFactory
 import bogomolov.aa.wordstrainer.databinding.FragmentGoogleSheetsBinding
-import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 class GoogleSheetsFragment : Fragment() {
@@ -27,7 +27,7 @@ class GoogleSheetsFragment : Fragment() {
     private lateinit var navController: NavController
 
     override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
+        (requireActivity().application as WordsTrainerApplication).appComponent.inject(this)
         super.onAttach(context)
     }
 

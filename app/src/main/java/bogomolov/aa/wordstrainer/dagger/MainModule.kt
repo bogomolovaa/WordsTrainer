@@ -14,17 +14,18 @@ import javax.inject.Singleton
 class MainModule {
 
     @Provides
-    fun providesContext(application: Application): Context = application
+    fun provideContext(application: Application): Context = application
 
     @Singleton
     @Provides
-    fun providesAppDatabase(application: Application): AppDatabase =
+    fun provideAppDatabase(application: Application): AppDatabase =
         Room.databaseBuilder(
             application,
             AppDatabase::class.java,
             DB_NAME
         ).fallbackToDestructiveMigration().build()
 
+    @Singleton
     @Provides
     fun providesRepository(
         application: Application,

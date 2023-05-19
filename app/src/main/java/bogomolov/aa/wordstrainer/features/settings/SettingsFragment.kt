@@ -14,12 +14,12 @@ import androidx.navigation.NavDeepLinkBuilder
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import bogomolov.aa.wordstrainer.R
+import bogomolov.aa.wordstrainer.WordsTrainerApplication
 import bogomolov.aa.wordstrainer.android.*
 import bogomolov.aa.wordstrainer.dagger.ViewModelFactory
 import bogomolov.aa.wordstrainer.databinding.FragmentSettingsBinding
 import bogomolov.aa.wordstrainer.features.main.MainActivity
 import bogomolov.aa.wordstrainer.view.fragments.SelectFirstLangDialogFragment
-import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 class SettingsFragment() : Fragment() {
@@ -29,7 +29,7 @@ class SettingsFragment() : Fragment() {
     private lateinit var binding: FragmentSettingsBinding
 
     override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
+        (requireActivity().application as WordsTrainerApplication).appComponent.inject(this)
         super.onAttach(context)
     }
 

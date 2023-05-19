@@ -15,13 +15,12 @@ import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import bogomolov.aa.wordstrainer.R
+import bogomolov.aa.wordstrainer.WordsTrainerApplication
 import bogomolov.aa.wordstrainer.dagger.ViewModelFactory
 import bogomolov.aa.wordstrainer.databinding.FragmentRepetitionBinding
-import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 class RepetitionFragment : Fragment() {
@@ -33,7 +32,7 @@ class RepetitionFragment : Fragment() {
     private var swipeBlocked = false
 
     override fun onAttach(context: Context) {
-        AndroidSupportInjection.inject(this)
+        (requireActivity().application as WordsTrainerApplication).appComponent.inject(this)
         super.onAttach(context)
     }
 

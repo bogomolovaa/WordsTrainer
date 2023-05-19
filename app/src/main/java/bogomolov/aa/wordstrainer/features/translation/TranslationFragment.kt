@@ -12,20 +12,20 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import bogomolov.aa.wordstrainer.R
 import bogomolov.aa.wordstrainer.WordsTrainerApplication
-import bogomolov.aa.wordstrainer.dagger.ViewModelFactory
 import bogomolov.aa.wordstrainer.databinding.FragmentTranslationBinding
-import bogomolov.aa.wordstrainer.repository.entity.Word
+import bogomolov.aa.wordstrainer.domain.Word
 import bogomolov.aa.wordstrainer.repository.json.fromJson
 import javax.inject.Inject
 
 class TranslationFragment : Fragment() {
     @Inject
-    internal lateinit var viewModelFactory: ViewModelFactory
+    internal lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: TranslationViewModel by viewModels { viewModelFactory }
     private lateinit var navController: NavController
     private lateinit var binding: FragmentTranslationBinding
@@ -89,11 +89,11 @@ fun getTranslationText(word: Word?): Spanned? {
     if (word?.json == null) return null
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         Html.fromHtml(
-            translationToHtml(word.json),
+            translationToHtml(word.json!!),
             Html.FROM_HTML_MODE_LEGACY
         )
     } else {
-        Html.fromHtml(translationToHtml(word.json))
+        Html.fromHtml(translationToHtml(word.json!!))
     }
 }
 

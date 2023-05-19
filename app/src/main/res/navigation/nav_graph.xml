@@ -18,12 +18,7 @@
         android:id="@+id/settingsFragment"
         android:name="bogomolov.aa.wordstrainer.features.settings.SettingsFragment"
         android:label="@string/settings">
-        <action
-            android:id="@+id/action_settingsFragment_to_googleSheetsFragment"
-            app:destination="@id/googleSheetsFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/googleSheetsFragment"
-        android:name="bogomolov.aa.wordstrainer.features.google_sheets.GoogleSheetsFragment"
-        android:label="@string/select_sheet" />
+
+    <include app:graph="@navigation/google_sheets_graph" />
 </navigation>

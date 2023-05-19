@@ -4,19 +4,19 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import bogomolov.aa.wordstrainer.repository.entity.Word
+import bogomolov.aa.wordstrainer.repository.entity.WordEntity
 
 @Dao
 interface WordDao {
 
     @Insert
-    fun addWord(word: Word): Long
+    fun addWord(word: WordEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addWords(word: List<Word>)
+    fun addWords(word: List<WordEntity>)
 
     @Query("select * from Word where direction = :direction")
-    fun loadAll(direction: String): List<Word>
+    fun loadAll(direction: String): List<WordEntity>
 
     @Query("update Word set rank = :rank where id = :id")
     fun updateRank(id: Int, rank: Int)

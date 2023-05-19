@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/google_sheets_graph"
+    app:startDestination="@id/googleSheetsFragment">
+
+    <fragment
+        android:id="@+id/googleSheetsFragment"
+        android:name="bogomolov.aa.wordstrainer.features.google_sheets.GoogleSheetsFragment"
+        android:label="@string/select_sheet" >
+    </fragment>
+
+</navigation>

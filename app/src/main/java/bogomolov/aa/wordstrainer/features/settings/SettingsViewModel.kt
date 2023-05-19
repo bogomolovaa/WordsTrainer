@@ -2,7 +2,7 @@ package bogomolov.aa.wordstrainer.features.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import bogomolov.aa.wordstrainer.repository.GoogleSheetsRepository
+import bogomolov.aa.wordstrainer.features.google_sheets.GoogleSheetsRepository
 import bogomolov.aa.wordstrainer.repository.RoomRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

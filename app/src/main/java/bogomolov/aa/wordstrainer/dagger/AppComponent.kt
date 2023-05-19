@@ -1,7 +1,8 @@
 package bogomolov.aa.wordstrainer.dagger
 
 import android.app.Application
-import bogomolov.aa.wordstrainer.features.google_sheets.GoogleSheetsFragment
+import bogomolov.aa.wordstrainer.features.google_sheets.di.GoogleSheetsComponent
+import bogomolov.aa.wordstrainer.features.google_sheets.di.GoogleSheetsSubcomponentModule
 import bogomolov.aa.wordstrainer.features.main.MainActivity
 import bogomolov.aa.wordstrainer.features.repetition.RepetitionFragment
 import bogomolov.aa.wordstrainer.features.settings.SettingsFragment
@@ -11,12 +12,10 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [ViewModelsModule::class, MainModule::class])
+@Component(modules = [ViewModelsModule::class, MainModule::class, GoogleSheetsSubcomponentModule::class])
 interface AppComponent {
 
     fun inject(activity: MainActivity)
-
-    fun inject(fragment: GoogleSheetsFragment)
 
     fun inject(fragment: RepetitionFragment)
 
@@ -32,4 +31,6 @@ interface AppComponent {
 
         fun build(): AppComponent
     }
+
+    fun googleSheetsComponent(): GoogleSheetsComponent.Builder
 }

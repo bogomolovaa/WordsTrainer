@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bogomolov.aa.wordstrainer.repository.Repository
-import bogomolov.aa.wordstrainer.repository.entity.Word
+import bogomolov.aa.wordstrainer.domain.Word
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject

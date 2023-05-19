@@ -3,9 +3,14 @@ package bogomolov.aa.wordstrainer.dagger
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
-import bogomolov.aa.wordstrainer.android.USE_GOOGLE_SHEET
-import bogomolov.aa.wordstrainer.android.getSetting
-import bogomolov.aa.wordstrainer.repository.*
+import bogomolov.aa.wordstrainer.R
+import bogomolov.aa.wordstrainer.features.google_sheets.GoogleSheetsRepository
+import bogomolov.aa.wordstrainer.features.shared.USE_GOOGLE_SHEET
+import bogomolov.aa.wordstrainer.features.shared.getSetting
+import bogomolov.aa.wordstrainer.repository.AppDatabase
+import bogomolov.aa.wordstrainer.repository.DB_NAME
+import bogomolov.aa.wordstrainer.repository.Repository
+import bogomolov.aa.wordstrainer.repository.RoomRepository
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -27,13 +32,21 @@ class MainModule {
 
     @Singleton
     @Provides
-    fun providesRepository(
+    fun provideGoogleSheetsRepository(application: Application): GoogleSheetsRepository {
+        return GoogleSheetsRepository(application, application.getString(R.string.app_name))
+    }
+
+    @Singleton
+    @Provides
+    fun provideRepository(
         application: Application,
         googleSheetsRepository: GoogleSheetsRepository,
         roomRepository: RoomRepository
     ): Repository {
-        val useGoogleSheet = getSetting<Boolean>(application, USE_GOOGLE_SHEET)!!
+        val useGoogleSheet = getSetting<Boolean>(
+            application,
+            USE_GOOGLE_SHEET
+        )!!
         return if (useGoogleSheet) googleSheetsRepository else roomRepository
     }
-
 }

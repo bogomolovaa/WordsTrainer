@@ -15,7 +15,6 @@
     <string name="enter_sheet_name">Enter new sheet name</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
-    <string name="new_sheet">New sheet</string>
     <string name="select_lang_source">Select source lang</string>
     <string name="select_lang_translation">Select translation lang</string>
     <string name="word_to_translate">enter here</string>
@@ -24,7 +23,6 @@
     <string name="import_words_button">Import</string>
     <string name="export_words">Export words</string>
     <string name="export_words_button">Export</string>
-    <string name="no_connection">No Network connection</string>
     <string name="connection_timeout">Connection timeout</string>
     <string name="sign_in_failed">Google Sign In failed</string>
     <string name="privacy_link">http://bogomolovaa.github.io/WordsTrainer/</string>

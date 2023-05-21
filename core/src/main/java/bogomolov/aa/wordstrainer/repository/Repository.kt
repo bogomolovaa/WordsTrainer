@@ -1,57 +1,64 @@
 package bogomolov.aa.wordstrainer.repository
 
+import android.annotation.SuppressLint
 import android.content.Context
+import bogomolov.aa.wordstrainer.domain.Word
+import bogomolov.aa.wordstrainer.domain.WordsRank
 import bogomolov.aa.wordstrainer.features.shared.TRANSLATION_DIRECTION
 import bogomolov.aa.wordstrainer.features.shared.getSetting
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 abstract class Repository(
     private val context: Context,
 ) {
-    val words: MutableList<bogomolov.aa.wordstrainer.domain.Word> = ArrayList()
-    protected var wordsMap: MutableMap<String, bogomolov.aa.wordstrainer.domain.Word> = HashMap()
-    private var wordsRank: bogomolov.aa.wordstrainer.domain.WordsRank? = null
+    val words: MutableList<Word> = ArrayList()
+    protected var wordsMap: MutableMap<String, Word> = HashMap()
+    private var wordsRank: WordsRank? = null
 
-    fun translate(
-        text: String,
-        translate: (String) -> bogomolov.aa.wordstrainer.domain.Word?
-    ): bogomolov.aa.wordstrainer.domain.Word? {
-        var word = wordsMap[text]
-        if (word == null) {
-            word = translate(text)
-            if (word != null) {
-                addWord(word, getSetting(context, TRANSLATION_DIRECTION))
+    @SuppressLint("CheckResult")
+    fun translate(text: String, translateWord: Single<Word>) = Single.create<Word> { emitter ->
+        wordsMap[text]?.let {
+            it.rank--
+            update(it).subscribe {
+                emitter.onSuccess(it)
+            }
+        } ?: translateWord.subscribe { word ->
+            addWord(word, getSetting(context, TRANSLATION_DIRECTION)).subscribe {
                 words.add(word)
                 wordsMap[text] = word
                 wordsRank?.addWord(word)
+                emitter.onSuccess(word)
             }
-        } else {
-            word.rank -= 1
-            update(word)
         }
-        return word
-    }
+    }.subscribeOn(Schedulers.io())
 
     fun nextWord() = wordsRank?.nextWord()
 
-    fun updateRank(word: bogomolov.aa.wordstrainer.domain.Word, delta: Int) {
+    fun updateRank(word: Word, delta: Int): Completable = Completable.create {
         wordsRank?.deleteWord(word)
         word.rank += delta
         update(word)
-    }
+        it.onComplete()
+    }.subscribeOn(Schedulers.io())
 
-    protected abstract fun update(word: bogomolov.aa.wordstrainer.domain.Word)
-    protected abstract fun addWord(word: bogomolov.aa.wordstrainer.domain.Word, direction: String?)
-    protected abstract fun loadAllWords(): List<bogomolov.aa.wordstrainer.domain.Word>
+    protected abstract fun update(word: Word): Completable
+    protected abstract fun addWord(word: Word, direction: String?): Completable
+    protected abstract fun loadAllWords(): Single<List<Word>>
 
+    @SuppressLint("CheckResult")
     fun initWords() {
         words.clear()
         wordsMap.clear()
-        words.addAll(loadAllWords())
-        for (word in words) wordsMap[word.word] = word
-        updateWordsRanger()
+        loadAllWords().observeOn(Schedulers.io()).subscribe { loadedWords ->
+            words.addAll(loadedWords)
+            for (word in words) wordsMap[word.word] = word
+            updateWordsRanger()
+        }
     }
 
     protected fun updateWordsRanger() {
-        wordsRank = bogomolov.aa.wordstrainer.domain.WordsRank(words)
+        wordsRank = WordsRank(words)
     }
 }

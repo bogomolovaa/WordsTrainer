@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import bogomolov.aa.wordstrainer.repository.entity.WordEntity
+import io.reactivex.rxjava3.core.Single
 
 @Dao
 interface WordDao {
@@ -16,7 +17,7 @@ interface WordDao {
     fun addWords(word: List<WordEntity>)
 
     @Query("select * from Word where direction = :direction")
-    fun loadAll(direction: String): List<WordEntity>
+    fun loadAll(direction: String): Single<List<WordEntity>>
 
     @Query("update Word set rank = :rank where id = :id")
     fun updateRank(id: Int, rank: Int)

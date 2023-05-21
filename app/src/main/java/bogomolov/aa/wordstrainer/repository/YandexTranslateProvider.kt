@@ -2,9 +2,12 @@ package bogomolov.aa.wordstrainer.repository
 
 import android.content.Context
 import android.util.Log
+import bogomolov.aa.wordstrainer.domain.Word
 import bogomolov.aa.wordstrainer.features.shared.TRANSLATION_DIRECTION
 import bogomolov.aa.wordstrainer.features.shared.getSetting
 import bogomolov.aa.wordstrainer.repository.json.fromJson
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import javax.inject.Inject
@@ -14,22 +17,24 @@ import javax.inject.Singleton
 class YandexTranslateProvider @Inject constructor(val context: Context) {
     private val client = OkHttpClient()
 
-    fun translate(text: String): bogomolov.aa.wordstrainer.domain.Word? {
+    fun translate(text: String): Single<Word> = Single.create<Word> {
         val request = Request.Builder().url(getUrl(text)).build()
         try {
             client.newCall(request).execute().use { response ->
                 val json = response.body!!.string()
-                return bogomolov.aa.wordstrainer.domain.Word(
-                    word = text,
-                    translation = fromJson(json)?.def?.get(0)?.tr?.get(0)?.text ?: "",
-                    json = json
+                it.onSuccess(
+                    Word(
+                        word = text,
+                        translation = fromJson(json)?.def?.get(0)?.tr?.get(0)?.text ?: "",
+                        json = json
+                    )
                 )
             }
         } catch (e: Exception) {
             Log.e("YandexTranslateProvider", "translate", e)
+            it.onError(e)
         }
-        return null
-    }
+    }.subscribeOn(Schedulers.io())
 
     private fun getUrl(text: String): String {
         val direction = getSetting<String>(

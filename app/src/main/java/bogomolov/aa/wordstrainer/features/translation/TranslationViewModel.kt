@@ -1,12 +1,12 @@
 package bogomolov.aa.wordstrainer.features.translation
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import bogomolov.aa.wordstrainer.domain.Word
 import bogomolov.aa.wordstrainer.repository.Repository
 import bogomolov.aa.wordstrainer.repository.YandexTranslateProvider
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 
 class TranslationViewModel
@@ -14,13 +14,12 @@ class TranslationViewModel
     private val repository: Repository,
     private val translateProvider: YandexTranslateProvider
 ) : ViewModel() {
-    val translationLiveData = MutableLiveData<bogomolov.aa.wordstrainer.domain.Word>()
+    val translationLiveData = MutableLiveData<Word>()
 
+    @SuppressLint("CheckResult")
     fun translate(text: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            translationLiveData.postValue(repository.translate(text) {
-                translateProvider.translate(text)
-            })
+        repository.translate(text, translateProvider.translate(text)).observeOn(AndroidSchedulers.mainThread()).subscribe { word ->
+            translationLiveData.value = word
         }
     }
 }

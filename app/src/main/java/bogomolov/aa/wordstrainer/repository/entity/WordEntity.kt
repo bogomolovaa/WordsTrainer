@@ -2,7 +2,6 @@ package bogomolov.aa.wordstrainer.repository.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import bogomolov.aa.wordstrainer.domain.Word
 
 @Entity(tableName = "Word")
 data class WordEntity(

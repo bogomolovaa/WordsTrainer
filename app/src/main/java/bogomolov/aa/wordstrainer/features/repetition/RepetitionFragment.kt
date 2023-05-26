@@ -21,6 +21,7 @@ import androidx.navigation.ui.NavigationUI
 import bogomolov.aa.wordstrainer.R
 import bogomolov.aa.wordstrainer.WordsTrainerApplication
 import bogomolov.aa.wordstrainer.databinding.FragmentRepetitionBinding
+import bogomolov.aa.wordstrainer.dp
 import javax.inject.Inject
 
 class RepetitionFragment : Fragment() {
@@ -63,10 +64,10 @@ class RepetitionFragment : Fragment() {
         viewModel.nextWordLiveData.observe(viewLifecycleOwner) { word ->
             binding.translationText.text = ""
             if (word != null) {
-                binding.wordText.text = word.word
+                binding.cardView.text = word.word
                 binding.wordMainText.text = word.word
             } else {
-                binding.wordText.text = ""
+                binding.cardView.text = ""
                 binding.wordMainText.text = ""
             }
         }
@@ -87,8 +88,8 @@ class RepetitionFragment : Fragment() {
                 distanceY: Float
             ): Boolean {
                 if (!swipeBlocked) {
-                    if (distanceX < -20) doRight()
-                    if (distanceX > 20) doWrong()
+                    if (distanceX < -20f.dp.toFloat()) doRight()
+                    if (distanceX > 20f.dp.toFloat()) doWrong()
                 }
                 return true
             }

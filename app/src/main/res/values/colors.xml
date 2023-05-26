@@ -8,4 +8,7 @@
     <color name="right_color">#CBF1A2</color>
     <color name="wrong_color">#FFA5A3</color>
 
+    <color name="card_outline">@color/colorPrimaryDark</color>
+    <color name="card_fill">@color/colorPrimary</color>
+
 </resources>

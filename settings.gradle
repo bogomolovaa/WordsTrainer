@@ -1,4 +1,0 @@
-rootProject.name='WordsTrainer'
-include ':app'
-include ':google_sheets'
-include ':core'

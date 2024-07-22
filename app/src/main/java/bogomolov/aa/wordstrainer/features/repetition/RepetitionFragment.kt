@@ -83,7 +83,7 @@ class RepetitionFragment : Fragment() {
 
             override fun onScroll(
                 e1: MotionEvent?,
-                e2: MotionEvent?,
+                e2: MotionEvent,
                 distanceX: Float,
                 distanceY: Float
             ): Boolean {

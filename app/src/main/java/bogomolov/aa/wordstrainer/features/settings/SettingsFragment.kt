@@ -1,5 +1,6 @@
 package bogomolov.aa.wordstrainer.features.settings
 
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -87,11 +88,11 @@ class SettingsFragment() : Fragment() {
                 .setComponentName(MainActivity::class.java)
                 .setGraph(R.navigation.nav_graph)
                 .setDestination(R.id.settingsFragment)
-                .createPendingIntent().send()
+                .createTaskStackBuilder().getPendingIntent(R.id.settingsFragment, PendingIntent.FLAG_IMMUTABLE)?.send()
             requireActivity().overridePendingTransition(0, 0)
         }
         binding.googleSheetName.setOnClickListener {
-            navController.navigate(R.id.google_sheets_graph)
+            navController.navigate(bogomolov.aa.wordstrainer.features.google_sheets.R.id.google_sheets_graph)
         }
         binding.importButton.setOnClickListener {
             binding.importButton.visibility = View.GONE

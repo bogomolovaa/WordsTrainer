@@ -14,11 +14,11 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
-import bogomolov.aa.wordstrainer.features.google_sheets.databinding.FragmentGoogleSheetsBinding
 import bogomolov.aa.wordstrainer.features.google_sheets.di.GoogleSheetsComponentProvider
 import bogomolov.aa.wordstrainer.features.shared.GOOGLE_SHEET_NAME
 import bogomolov.aa.wordstrainer.features.shared.USE_GOOGLE_SHEET
 import bogomolov.aa.wordstrainer.features.shared.setSetting
+import bogomolov.aa.wordstrainer.features.google_sheets.databinding.FragmentGoogleSheetsBinding
 import javax.inject.Inject
 
 class GoogleSheetsFragment : Fragment(R.layout.fragment_google_sheets) {

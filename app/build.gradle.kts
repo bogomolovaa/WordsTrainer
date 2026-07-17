@@ -1,6 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import com.android.build.api.dsl.Packaging
 import java.io.FileInputStream
 import java.util.*
 
@@ -16,15 +15,15 @@ keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 
 android {
     namespace = "bogomolov.aa.wordstrainer"
-    compileSdk = 34
+    compileSdk = 36
     buildToolsVersion = "34.0.0"
     defaultConfig {
         applicationId = "bogomolov.aa.wordstrainer"
         minSdk = 24
         //noinspection EditedTargetSdkVersion
-        targetSdk = 34
-        versionCode = 3
-        versionName = "1.2"
+        targetSdk = 36
+        versionCode = 4
+        versionName = "1.3"
         multiDexEnabled = true
         javaCompileOptions {
             annotationProcessorOptions {
